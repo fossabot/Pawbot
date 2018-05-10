@@ -46,11 +46,6 @@ class Information:
         """ Invite me to your server """
         await ctx.send(f"**{ctx.author.name}**, use this URL to invite me\n<{discord.utils.oauth_url(self.bot.user.id)}>")
 
-    @commands.command()
-    async def source(self, ctx):
-        """ Invite me to your server """
-        await ctx.send(f"**{ctx.bot.user}** is powered by this source code:\nhttps://github.com/xelA/discord_bot.py")
-
     @commands.command(aliases=['supportserver', 'feedbackserver'])
     async def botserver(self, ctx):
         """ Get an invite to our support server! """

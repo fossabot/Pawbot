@@ -51,39 +51,6 @@ class Fun_Commands:
         await ctx.send(f"**{ctx.author.name}** flipped a coin and got **{random.choice(coinsides)}**!")
 
     @commands.command()
-    @commands.cooldown(rate=1, per=2.0, type=commands.BucketType.user)
-    async def urban(self, ctx, *, search: str):
-        """ Find the 'best' definition to your words """
-        if not permissions.can_embed(ctx):
-            return await ctx.send("I cannot send embeds here ;-;")
-
-        url = await http.get(f'http://api.urbandictionary.com/v0/define?term={search}', res_method="json")
-
-        if url is None:
-            return await ctx.send("I think the API broke...")
-
-        count = len(url['list'])
-        if count == 0:
-            return await ctx.send("Couldn't find your search in the dictionary...")
-        result = url['list'][random.randint(0, count - 1)]
-
-        definition = result['definition']
-        if len(definition) >= 1000:
-                definition = definition[:1000]
-                definition = definition.rsplit(' ', 1)[0]
-                definition += '...'
-
-        embed = discord.Embed(colour=0xC29FAF, description=f"**{result['word']}**\n*by: {result['author']}*")
-        embed.add_field(name='Definition', value=definition, inline=False)
-        embed.add_field(name='Example', value=result['example'], inline=False)
-        embed.set_footer(text=f"👍 {result['thumbs_up']} | 👎 {result['thumbs_down']}")
-
-        try:
-            await ctx.send(embed=embed)
-        except discord.Forbidden:
-            await ctx.send("I found something, but have no access to post it... [Embed permissions]")
-
-    @commands.command()
     async def reverse(self, ctx, *, text: str):
         """ !poow ,ffuts esreveR
         Everything you type after reverse will of course, be reversed
@@ -122,15 +89,6 @@ class Fun_Commands:
 
         await ctx.send(f"**{user.name}** is **{hot:.2f}%** hot {emoji}")
 
-    @commands.command(aliases=['noticemesenpai'])
-    async def noticeme(self, ctx):
-        """ Notice me senpai! owo """
-        if not permissions.can_upload(ctx):
-            return await ctx.send("I cannot send images here ;-;")
-
-        bio = BytesIO(await http.get("https://i.alexflipnote.xyz/500ce4.gif", res_method="read"))
-        await ctx.send(file=discord.File(bio, filename="noticeme.gif"))
-
     @commands.command(aliases=['slots', 'bet'])
     @commands.cooldown(rate=1, per=3.0, type=commands.BucketType.user)
     async def slot(self, ctx):
@@ -149,6 +107,14 @@ class Fun_Commands:
 
         result = f"**{ctx.author.name}** rolled the slots...\n**[ {a} {b} {c} ]**\n{message}"
         await ctx.send(result)
+
+    @commands.command()
+    async def yell(self, ctx, *, text: str):
+        """ AAAAAAAAA!
+        Everything you type after yell will of course, be yelled
+        """
+        t_upper = text.upper().replace("@", "@\u200B").replace("&", "&\u200B")
+        await ctx.send(f"⬆️ {t_upper}")
 
 
 def setup(bot):
