@@ -1,51 +1,31 @@
-#Pybot by Paws#0001
+import os
 
-import discord
-import random
+from discord.ext.commands import HelpFormatter
+from data import Bot
+from utils import permissions, default
 
-from discord.ext import commands
-from discord.ext.commands import Bot
-import asyncio
+config = default.get("config.json")
+description = """
+Code base from AlexFlipnote
+Edited by lyricalpaws
+"""
 
-bot = commands.Bot(command_prefix='!')
 
-bot.remove_command("help")
+class HelpFormat(HelpFormatter):
+    async def format_help_for(self, context, command_or_bot):
+        if permissions.can_react(context):
+            await context.message.add_reaction(chr(0x2709))
 
-@bot.event
-async def on_ready():
-    print ("I'm ready!")
-    await bot.change_presence(game=discord.Game(name='!commands for commands'))
+        return await super().format_help_for(context, command_or_bot)
 
-@bot.command(pass_context=True)
-async def ping(ctf):
-    await bot.say(":ping_pong: Pong!")
 
-@bot.command(pass_context=True)
-async def serverinfo(ctx):
-    embed = discord.Embed(name="{}'s info".format(ctx.message.server.name), description="Here's what I could find.", color=0x00ff00)
-    embed.set_author(name="Server information!")
-    embed.add_field(name="Name", value=ctx.message.server.name, inline=True)
-    embed.add_field(name="ID", value=ctx.message.server.id, inline=True)
-    embed.add_field(name="Roles", value=len(ctx.message.server.roles), inline=True)
-    embed.add_field(name="Members", value=len(ctx.message.server.members))
-    embed.set_thumbnail(url=ctx.message.server.icon_url)
-    await bot.say(embed=embed)
+print("Logging in...")
+help_attrs = dict(hidden=True)
+bot = Bot(command_prefix=config.prefix, prefix=config.prefix, pm_help=True, help_attrs=help_attrs, formatter=HelpFormat())
 
-@bot.command(pass_context=True)
-async def botsize(ctx):
-    await bot.say('I am in {} servers'.format(len(bot.servers)))
+for file in os.listdir("cogs"):
+    if file.endswith(".py"):
+        name = file[:-3]
+        bot.load_extension(f"cogs.{name}")
 
-@bot.command(pass_context=True)
-async def echo(ctx, arg):
-    await bot.say(arg)
-
-@bot.command(pass_context=True)
-async def help(ctx):
-    await bot.say("```\nMy commands are:\n  !help\n  !echo\n  !ping\n  !serverinfo\n  !botsize\n```")
-
-@bot.command(pass_context=True)
-async def test(ctx):
-    author = ctx.message.author
-    await bot.say("Your username is: {}, your ID is: {}, your nickname is: {}".format(author.name, author.id, author.nick))
-
-bot.run("YOUR TOKEN HERE")
+bot.run(config.token)
