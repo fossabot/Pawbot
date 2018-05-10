@@ -80,6 +80,19 @@ class Moderator:
     @commands.command()
     @commands.guild_only()
     @permissions.has_permissions(ban_members=True)
+    async def massban(self, ctx, reason: ActionReason, *members: MemberID):
+        """ Mass bans multiple members from the server. """
+
+        try:
+            for member_id in members:
+                await ctx.guild.ban(discord.Object(id=member_id), reason=default.responsible(ctx.author, reason))
+            await ctx.send(default.actionmessage("massbanned", mass=True))
+        except Exception as e:
+            await ctx.send(e)
+
+    @commands.command()
+    @commands.guild_only()
+    @permissions.has_permissions(ban_members=True)
     async def unban(self, ctx, member: MemberID, *, reason: str = None):
         """ Bans a user from the current server. """
         try:
