@@ -89,25 +89,6 @@ class Fun_Commands:
 
         await ctx.send(f"**{user.name}** is **{hot:.2f}%** hot {emoji}")
 
-    @commands.command(aliases=['slots', 'bet'])
-    @commands.cooldown(rate=1, per=3.0, type=commands.BucketType.user)
-    async def slot(self, ctx):
-        """ Roll the slot machine """
-        emojis = "🍎🍊🍐🍋🍉🍇🍓🍒"
-        a = random.choice(emojis)
-        b = random.choice(emojis)
-        c = random.choice(emojis)
-
-        if (a == b == c):
-            message = 'and won! 🎉'
-        elif (a == b) or (a == c) or (b == c):
-            message = 'and almost won (2/3)'
-        else:
-            message = 'and lost...'
-
-        result = f"**{ctx.author.name}** rolled the slots...\n**[ {a} {b} {c} ]**\n{message}"
-        await ctx.send(result)
-
     @commands.command()
     async def yell(self, ctx, *, text: str):
         """ AAAAAAAAA!
@@ -115,6 +96,14 @@ class Fun_Commands:
         """
         t_upper = text.upper().replace("@", "@\u200B").replace("&", "&\u200B")
         await ctx.send(f"⬆️ {t_upper}")
+
+    @commands.command()
+    async def echo(self, ctx, *, text: str):
+        """
+        Whatever you say!
+        """
+        t_echo = text.replace("@", "@\u200B").replace("&", "&\u200B")
+        await ctx.send(f"{t_echo}")
 
 
 def setup(bot):
