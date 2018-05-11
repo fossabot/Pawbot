@@ -19,9 +19,6 @@ class Admin:
         if ctx.author.id in self.config.owners:
             return await ctx.send(f"Yes **{ctx.author.name}** you are admin! ✅")
 
-        if ctx.author.id == 86477779717066752:
-            return await ctx.send(f"Well kinda **{ctx.author.name}**.. you still own the source code")
-
         await ctx.send(f"no, heck off {ctx.author.name}")
 
     @commands.command()

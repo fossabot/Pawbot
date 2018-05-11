@@ -6,7 +6,6 @@ from discord.ext import commands
 from utils import permissions, default
 
 
-# Source: https://github.com/Rapptz/RoboDanny/blob/rewrite/cogs/mod.py
 class MemberID(commands.Converter):
     async def convert(self, ctx, argument):
         try:
