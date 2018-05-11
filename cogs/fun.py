@@ -1,10 +1,13 @@
 import random
 import discord
 import json
+import requests
+import io
 
 from io import BytesIO
 from discord.ext import commands
 from utils import lists, permissions, http, default
+from utils.lists import *
 
 
 class Fun_Commands:
@@ -137,6 +140,22 @@ class Fun_Commands:
         """
         t_echo = text.replace("@", "@\u200B").replace("&", "&\u200B")
         await ctx.send(f"{t_echo}")
+
+    @commands.command()
+    @commands.cooldown(rate=1, per=30, type=commands.BucketType.user)
+    async def headpat(self, ctx):
+        """Posts a random headpat from headp.at"""
+
+        def url_to_bytes(url):
+            data = requests.get(url)
+            content = io.BytesIO(data.content)
+            filename = url.rsplit("/", 1)[-1]
+            return {"content":content, "filename":filename}
+
+        pats = requests.get("http://headp.at/js/pats.json").json()
+        pat = random.choice(pats)
+        file = url_to_bytes("http://headp.at/pats/{}".format(pat))
+        await ctx.send(file=discord.File(file["content"], file["filename"]))
 
 
 def setup(bot):

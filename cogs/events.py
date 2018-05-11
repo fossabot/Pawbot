@@ -58,7 +58,7 @@ class Events:
         if not hasattr(self.bot, 'uptime'):
             self.bot.uptime = datetime.utcnow()
 
-        print(f'Ready: {self.bot.user} | Servers: {len(self.bot.guilds)}')
+        print(f'Ready: {self.bot.user} | Servers: {len(self.bot.guilds)}\nInvite with: https://discordapp.com/api/oauth2/authorize?client_id={self.bot.user.id}&permissions=8&scope=bot')
         await self.bot.change_presence(activity=discord.Game(type=0, name=self.config.playing), status=discord.Status.online)
 
 
