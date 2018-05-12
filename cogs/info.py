@@ -50,7 +50,7 @@ class Information:
     async def botserver(self, ctx):
         """ Get an invite to our support server! """
         if isinstance(ctx.channel, discord.DMChannel) or ctx.guild.id != 353684556848562176:
-            return await ctx.send(f"**Here you go {ctx.author.name} 🍻\n<{repo.invite}>**")
+            return await ctx.send(f"**{ctx.author.name}**, you can join here! 🍻\n<{repo.invite}>")
 
         await ctx.send(f"**{ctx.author.name}** this is my home you know :3")
 
