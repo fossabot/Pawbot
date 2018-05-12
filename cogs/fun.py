@@ -43,6 +43,12 @@ class Fun_Commands:
 
     @commands.command()
     @commands.cooldown(rate=1, per=1.5, type=commands.BucketType.user)
+    async def neko(self, ctx):
+        """ Posts a random neko """
+        await self.randomimageapi(ctx, 'https://nekos.life/api/neko', 'neko')
+
+    @commands.command()
+    @commands.cooldown(rate=1, per=1.5, type=commands.BucketType.user)
     async def duck(self, ctx):
         """ Posts a random duck """
         await self.randomimageapi(ctx, 'https://random-d.uk/api/v1/random', 'url')
@@ -134,6 +140,14 @@ class Fun_Commands:
         await ctx.send(f"⬆️ {t_upper}")
 
     @commands.command()
+    async def whisper(self, ctx, *, text: str):
+        """ Shh
+        Be quiet..
+        """
+        t_lower = text.lower().replace("@", "@\u200B").replace("&", "&\u200B")
+        await ctx.send(f"⬇️ {t_lower}")
+
+    @commands.command()
     async def echo(self, ctx, *, text: str):
         """
         Whatever you say!
@@ -156,6 +170,22 @@ class Fun_Commands:
         pat = random.choice(pats)
         file = url_to_bytes("http://headp.at/pats/{}".format(pat))
         await ctx.send(file=discord.File(file["content"], file["filename"]))
+
+    @commands.command()
+    async def hug(self, ctx, user: discord.Member = None):
+        """ Hug a user! """
+        if user is None:
+            user = ctx.author
+
+        await ctx.send(f"💖 | **{ctx.author.name}** hugs **{user.name}**")
+
+    @commands.command()
+    async def cookie(self, ctx, user: discord.Member = None):
+        """ Hug a user! """
+        if user is None:
+            user = ctx.author
+
+        await ctx.send(f"🍪 | **{ctx.author.name}** gives **{user.name}** a cookie!")
 
 
 def setup(bot):
