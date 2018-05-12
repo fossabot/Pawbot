@@ -79,6 +79,18 @@ class Moderator:
     @commands.command()
     @commands.guild_only()
     @permissions.has_permissions(ban_members=True)
+    async def softban(self, ctx, member: MemberID, *, reason: str = None):
+        """ Bans a user from the current server, then unbans them again. """
+        try:
+            await ctx.guild.ban(discord.Object(id=member), reason=default.responsible(ctx.author, reason))
+            await ctx.guild.unban(discord.Object(id=member), reason=default.responsible(ctx.author, reason))
+            await ctx.send(default.actionmessage("softbanned"))
+        except Exception as e:
+            await ctx.send(e)
+
+    @commands.command()
+    @commands.guild_only()
+    @permissions.has_permissions(ban_members=True)
     async def massban(self, ctx, reason: ActionReason, *members: MemberID):
         """ Mass bans multiple members from the server. """
 
