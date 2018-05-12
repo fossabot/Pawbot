@@ -187,6 +187,22 @@ class Fun_Commands:
 
         await ctx.send(f"🍪 | **{ctx.author.name}** gives **{user.name}** a cookie!")
 
+    @commands.command()
+    async def stab(self, ctx, user: discord.Member = None):
+        """ Ssstab a perssson! """
+        if user is None:
+            user = ctx.author
+
+        await ctx.send(f"🔪 | **{ctx.author.name}** stabbed **{user.name}** in the hand (How rude)!")
+
+    @commands.command()
+    async def pat(self, ctx, user: discord.Member = None):
+        """ Headpats for all! """
+        if user is None:
+            user = ctx.author
+
+        await ctx.send(f"<a:patkyutie:444890889513598986> | **{ctx.author.name}** pats **{user.name}** on the head!")
+
 
 def setup(bot):
     bot.add_cog(Fun_Commands(bot))

@@ -1,9 +1,9 @@
 {
   "apps": [
     {
-      "name": "bot.py",
+      "name": "index",
       "script": "index.py",
-      "interpreter": "python3.6",
+      "interpreter": "python",
       "interpreter_args": "-u"
     }
   ]
