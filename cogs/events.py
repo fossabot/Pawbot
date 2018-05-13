@@ -35,7 +35,7 @@ class Events:
             _traceback = ''.join(_traceback)
             error = ('```py\n{2}{0}: {3}\n```').format(type(err).__name__, ctx.message.content, _traceback, err)
 
-            await ctx.send(f"`ERROR`\n{error}\nPlease report this to <https://github.com/lyricalpaws/snekbot/issues>")
+            await ctx.send(f"`ERROR`\n{error}\nPlease report this to <https://github.com/lyricalpaws/PyBot/issues>")
 
         elif isinstance(err, errors.CheckFailure):
             pass
