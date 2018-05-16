@@ -27,10 +27,10 @@ class Fun_Commands:
         except json.JSONDecodeError:
             return await ctx.send("Couldn't find anything from the API")
 
-        embed = discord.Embed(colour=0xff50e0)
+        embed = discord.Embed(colour=0x00ddff)
         embed.set_image(url=r[endpoint])
         await ctx.send(embed=embed)
-        
+
 
     @commands.command()
     @commands.cooldown(rate=1, per=1.5, type=commands.BucketType.user)
