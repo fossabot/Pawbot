@@ -32,7 +32,3 @@ def can_upload(ctx):
 
 def can_react(ctx):
     return isinstance(ctx.channel, discord.DMChannel) or ctx.channel.permissions_for(ctx.guild.me).add_reactions
-
-
-def is_nsfw(ctx):
-    return isinstance(ctx.channel, discord.DMChannel) or ctx.channel.is_nsfw()
