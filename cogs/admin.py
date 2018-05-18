@@ -88,6 +88,21 @@ class Admin:
         except Exception as e:
             await ctx.send(e)
 
+    @change.command(name="connection")
+    @commands.check(repo.is_owner)
+    async def change_connection(self, ctx, *, channels: int):
+        """ Connect to channel and relay messages """
+        try:
+            dataIO.change_value("config.json", "uplinkchannel", channels)
+            dataIO.change_value("config.json", "downlink", ctx.channel.id)
+            await ctx.send(f"Successfully connected to the channel, I will now reboot to save changes!")
+            time.sleep(1)
+            await self.bot.logout()
+        except discord.InvalidArgument as err:
+            await ctx.send(err)
+        except Exception as e:
+            await ctx.send(e)
+
     @change.command(name="username")
     @commands.check(repo.is_owner)
     async def change_username(self, ctx, *, name: str):
