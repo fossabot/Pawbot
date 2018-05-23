@@ -52,7 +52,7 @@ class Information:
         if isinstance(ctx.channel, discord.DMChannel) or ctx.guild.id != 353684556848562176:
             return await ctx.send(f"**{ctx.author.name}**, you can join here! 🍻\n<{repo.invite}>")
 
-        await ctx.send(f"**{ctx.author.name}** this is my home you know :3")
+        await ctx.send(f"**{ctx.author.name}**, this is my home.")
 
 
     @commands.command(aliases=['info', 'stats', 'status'])
