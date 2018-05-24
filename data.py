@@ -18,7 +18,7 @@ class Bot(AutoShardedBot):
             return
 
         #This logs any commands, no other messages are logged.
-        if any(c in msg.content for c in config.prefix):
+        if msg.content.startswith(tuple(config.prefix)):
             commandlog = self.get_channel(448947806196203520)
             await commandlog.send(f"`{msg.author.name}#{msg.author.discriminator}` `({msg.author.id})`, `{msg.guild.name}` (`{msg.guild.id}`): `{msg.content}`")
         else:
