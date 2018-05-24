@@ -17,6 +17,13 @@ class Bot(AutoShardedBot):
         elif msg.author.id in config.userblacklist:
             return
 
+        #This logs any commands, no other messages are logged.
+        if any(c in msg.content for c in config.prefix):
+            commandlog = self.get_channel(448947806196203520)
+            await commandlog.send(f"`{msg.author.name}#{msg.author.discriminator}` `({msg.author.id})`, `{msg.guild.name}` (`{msg.guild.id}`): `{msg.content}`")
+        else:
+            pass
+
         if msg.channel.id == config.uplinkchannel:
             connectionchannel = self.get_channel(config.downlink)
 
