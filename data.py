@@ -12,6 +12,11 @@ class Bot(AutoShardedBot):
         if not self.is_ready() or msg.author.bot or not permissions.can_send(msg):
             return
 
+        if msg.guild.id in config.serverblacklist:
+            return
+        elif msg.author.id in config.userblacklist:
+            return
+
         if msg.channel.id == config.uplinkchannel:
             connectionchannel = self.get_channel(config.downlink)
 
