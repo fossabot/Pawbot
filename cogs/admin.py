@@ -102,6 +102,7 @@ class Admin:
             await ctx.send(err)
         except Exception as e:
             await ctx.send(e)
+    #I only link to channels when there is spam from that channel.
 
     @change.command(name="username")
     @commands.check(repo.is_owner)
