@@ -198,7 +198,7 @@ class Moderator:
 
         if ctx.invoked_subcommand is None:
             help_cmd = self.bot.get_command('help')
-            await ctx.invoke(help_cmd, 'remove')
+            await ctx.invoke(help_cmd, 'prune')
 
     async def do_removal(self, ctx, limit, predicate, *, before=None, after=None, message=True):
         if limit > 2000:
@@ -300,6 +300,30 @@ class Moderator:
                 await message.clear_reactions()
 
         await ctx.send(f'Successfully removed {total_reactions} reactions.')
+
+    @commands.command()
+    @commands.guild_only()
+    @permissions.has_permissions(manage_roles=True)
+    async def giverole(self, ctx, member: discord.Member, *, rolename: str = None):
+        """ Gives the role to the user. """
+        try:
+            role = discord.utils.get(ctx.guild.roles, name=rolename)
+            await member.add_roles(role)
+            await ctx.send(f"✅ I have given **{member.name}** the **{role.name}** role!")
+        except:
+            return
+
+    @commands.command()
+    @commands.guild_only()
+    @permissions.has_permissions(manage_roles=True)
+    async def removerole(self, ctx, member: discord.Member, *, rolename: str = None):
+        """ Removes the role from a user. """
+        try:
+            role = discord.utils.get(ctx.guild.roles, name=rolename)
+            await member.remove_roles(role)
+            await ctx.send(f"✅ I have removed **{member.name}** from the **{role.name}** role!")
+        except:
+            return
 
 
 def setup(bot):
