@@ -147,14 +147,6 @@ class Admin:
         except discord.HTTPException as err:
             await ctx.send(err)
 
-    @commands.command(aliases=['exec'])
-    @commands.check(repo.is_owner)
-    async def execute(self, ctx, *, text: str):
-        """ Do a shell command. """
-        text_parsed = list(filter(None, text.split(" ")))
-        output = subprocess.check_output(text_parsed).decode()
-        await ctx.send(f"```fix\n{output}\n```")
-
 
 def setup(bot):
     bot.add_cog(Admin(bot))
