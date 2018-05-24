@@ -206,6 +206,14 @@ class Fun_Commands:
 
         await ctx.send(f"<a:patkyutie:444890889513598986> | **{ctx.author.name}** pats **{user.name}** on the head!")
 
+    @commands.command()
+    async def nom(self, ctx, user: discord.Member = None):
+        """ Nom a user! """
+        if user is None:
+            user = ctx.author
+
+        await ctx.send(f"<a:WanTriggered:437201280918618112> | **{ctx.author.name}** nommed **{user.name}**'s arm!")
+
 
 def setup(bot):
     bot.add_cog(Fun_Commands(bot))
