@@ -33,25 +33,25 @@ class Fun_Commands:
 
 
     @commands.command()
-    @commands.cooldown(rate=1, per=1.5, type=commands.BucketType.user)
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
     async def cat(self, ctx):
         """ Posts a random cat """
         await self.randomimageapi(ctx, 'https://nekos.life/api/v2/img/meow', 'url')
 
     @commands.command()
-    @commands.cooldown(rate=1, per=1.5, type=commands.BucketType.user)
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
     async def dog(self, ctx):
         """ Posts a random dog """
         await self.randomimageapi(ctx, 'https://random.dog/woof.json', 'url')
 
     @commands.command()
-    @commands.cooldown(rate=1, per=1.5, type=commands.BucketType.user)
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
     async def neko(self, ctx):
         """ Posts a random neko """
         await self.randomimageapi(ctx, 'https://nekos.life/api/neko', 'neko')
 
     @commands.command()
-    @commands.cooldown(rate=1, per=1.5, type=commands.BucketType.user)
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
     async def duck(self, ctx):
         """ Posts a random duck """
         await self.randomimageapi(ctx, 'https://random-d.uk/api/v1/random', 'url')
@@ -82,7 +82,7 @@ class Fun_Commands:
         await ctx.send(f"I'd rate {thing} a **{numbers}.{decimals} / 100**")
 
     @commands.command()
-    @commands.cooldown(rate=1, per=2.0, type=commands.BucketType.user)
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
     async def urban(self, ctx, *, search: str):
         """ Find the 'best' definition to your words """
         if not permissions.can_embed(ctx):
@@ -159,7 +159,7 @@ class Fun_Commands:
         await ctx.send(f"{t_echo}")
 
     @commands.command()
-    @commands.cooldown(rate=1, per=30, type=commands.BucketType.user)
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
     async def headpat(self, ctx):
         """Posts a random headpat from headp.at"""
 
