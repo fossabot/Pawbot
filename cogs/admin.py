@@ -14,14 +14,6 @@ class Admin:
         self._last_result = None
 
     @commands.command()
-    async def amiadmin(self, ctx):
-        """ Are you admin? """
-        if ctx.author.id in self.config.owners:
-            return await ctx.send(f"Yes **{ctx.author.name}** you are admin! ✅")
-
-        await ctx.send(f"no, heck off {ctx.author.name}")
-
-    @commands.command()
     @commands.check(repo.is_owner)
     async def reload(self, ctx, name: str):
         """ Reloads an extension. """
