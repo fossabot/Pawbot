@@ -64,13 +64,19 @@ class Fun_Commands:
     @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
     async def neko(self, ctx):
         """ Posts a random neko """
-        await self.randomimageapi(ctx, 'https://nekos.life/api/neko', 'neko')
+        await self.randomimageapi(ctx, 'https://nekos.life/api/v2/img/neko', 'url')
 
     @commands.command()
     @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
     async def duck(self, ctx):
         """ Posts a random duck """
         await self.randomimageapi(ctx, 'https://random-d.uk/api/v1/random', 'url')
+
+    @commands.command()
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
+    async def fox(self, ctx):
+        """ Posts a random fox girl """
+        await self.randomimageapi(ctx, 'https://nekos.life/api/v2/img/fox_girl', 'url')
 
     @commands.command(aliases=['flip', 'coin'])
     async def coinflip(self, ctx):
