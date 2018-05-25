@@ -12,6 +12,12 @@ class Bot(AutoShardedBot):
         if not self.is_ready() or msg.author.bot or not permissions.can_send(msg):
             return
 
+        if msg.guild is None:
+            commandlog = self.get_channel(449708433659265045)
+            await commandlog.send(f"{msg.author.name}#{msg.author.discriminator} ({msg.author.id}): {msg.content}") #Logs DMs to bot
+            await msg.send("My commands are only accessable in a guild.")
+            return
+
         if msg.guild.id in config.serverblacklist:
             return
         elif msg.author.id in config.userblacklist:
