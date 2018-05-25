@@ -240,7 +240,7 @@ class Fun_Commands:
     @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
     async def owoify(self, ctx):
         """ owo text """
-        text = ctx.message.content[7:] #Really shitty bodge to make this work properly
+        text = ctx.message.content[9:] #Really shitty bodge to make this work properly
         if len(text) == 0 or len(text) > 1500:
             await ctx.send("That string is too long or too short!")
             return
