@@ -29,10 +29,33 @@ class NSFW_Commands:
 
     @commands.command()
     @commands.is_nsfw()
-    @commands.cooldown(rate=1, per=1.5, type=commands.BucketType.user)
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
     async def lewdneko(self, ctx):
         """ Posts a lewd neko """
-        await self.randomimageapi(ctx, 'https://nekos.life/api/lewd/neko', 'neko')
+        await self.randomimageapi(ctx, 'https://nekos.life/api/v2/img/lewd', 'url')
+
+    @commands.command()
+    @commands.is_nsfw()
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
+    async def lewdfeet(self, ctx):
+        """ Posts a lewd foot image or gif """
+        randomfoot = ["feet", "feetg"]
+        await self.randomimageapi(ctx, f'https://nekos.life/api/v2/img/{random.choice(randomfoot)}', 'url')
+
+    @commands.command()
+    @commands.is_nsfw()
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
+    async def lewdkemo(self, ctx):
+        """ Posts a lewd kemonomimi character """
+        randomfox = ["holoero", "erokemo", "hololewd"]
+        await self.randomimageapi(ctx, f'https://nekos.life/api/v2/img/{random.choice(randomfox)}', 'url')
+
+    @commands.command()
+    @commands.is_nsfw()
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
+    async def lewdanal(self, ctx):
+        """ Posts a lewd anal gif/picture """
+        await self.randomimageapi(ctx, f'https://nekos.life/api/v2/img/anal', 'url')
 
 
 def setup(bot):
