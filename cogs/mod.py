@@ -58,9 +58,9 @@ class Moderator:
         """ Nicknames a user from the current server. """
         try:
             await member.edit(nick=name, reason=default.responsible(ctx.author, "Changed by command"))
-            message = f"Changed **{member.name}'s** nickname to **{name}**"
+            message = f"👌 Changed **{member.name}'s** nickname to **{name}**"
             if name is None:
-                message = f"Reset **{member.name}'s** nickname"
+                message = f"👌 Reset **{member.name}'s** nickname"
             await ctx.send(message)
         except Exception as e:
             await ctx.send(e)
@@ -309,7 +309,7 @@ class Moderator:
         try:
             role = discord.utils.get(ctx.guild.roles, name=rolename)
             await member.add_roles(role)
-            await ctx.send(f"✅ I have given **{member.name}** the **{role.name}** role!")
+            await ctx.send(f"👌 I have given **{member.name}** the **{role.name}** role!")
         except:
             return
 
@@ -321,7 +321,7 @@ class Moderator:
         try:
             role = discord.utils.get(ctx.guild.roles, name=rolename)
             await member.remove_roles(role)
-            await ctx.send(f"✅ I have removed **{member.name}** from the **{role.name}** role!")
+            await ctx.send(f"👌 I have removed **{member.name}** from the **{role.name}** role!")
         except:
             return
 
