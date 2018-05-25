@@ -31,6 +31,22 @@ class Fun_Commands:
         embed.set_image(url=r[endpoint])
         await ctx.send(embed=embed)
 
+    async def textapi(self, ctx, url, endpoint):
+        try:
+            r = await http.get(url, res_method="json", no_cache=True)
+        except json.JSONDecodeError:
+            return await ctx.send("Couldn't find anything from the API")
+
+        await ctx.send(f"{r[endpoint]}")
+
+    async def factapi(self, ctx, url, endpoint):
+        try:
+            r = await http.get(url, res_method="json", no_cache=True)
+        except json.JSONDecodeError:
+            return await ctx.send("Couldn't find anything from the API")
+
+        await ctx.send(f'**Did you know?** 🤔\n\n{r[endpoint]}')
+
 
     @commands.command()
     @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
@@ -213,6 +229,22 @@ class Fun_Commands:
             user = ctx.author
 
         await ctx.send(f"<a:WanTriggered:437201280918618112> | **{ctx.author.name}** nommed **{user.name}**'s arm!")
+
+    @commands.command()
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
+    async def owoify(self, ctx):
+        """ owo text """
+        text = ctx.message.content[7:] #Really shitty bodge to make this work properly
+        if len(text) == 0 or len(text) > 1500:
+            await ctx.send("That string is too long or too short!")
+            return
+        await self.textapi(ctx, f'https://nekos.life/api/v2/owoify?text={text}', 'owo')
+
+    @commands.command()
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
+    async def fact(self, ctx):
+        """ sends a random fact """
+        await self.factapi(ctx, 'https://nekos.life/api/v2/fact', 'fact')
 
 
 def setup(bot):
