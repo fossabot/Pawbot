@@ -30,9 +30,9 @@ def responsible(target, reason):
 
 
 def actionmessage(case, mass=False):
-    output = f"**{case}** the user"
+    output = f"{case} the user"
 
     if mass is True:
         output = f"**{case}** the IDs/Users"
 
-    return f"👌 Successfully {output}"
+    return f"👌 {output}"
