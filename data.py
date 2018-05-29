@@ -4,6 +4,7 @@ config = default.get("config.json")
 
 from discord.ext.commands import AutoShardedBot
 
+
 class Bot(AutoShardedBot):
     def __init__(self, *args, prefix=None, **kwargs):
         super().__init__(*args, **kwargs)
@@ -14,8 +15,8 @@ class Bot(AutoShardedBot):
 
         if msg.guild is None:
             commandlog = self.get_channel(449708433659265045)
-            await commandlog.send(f"{msg.author.name}#{msg.author.discriminator} ({msg.author.id}): {msg.content}") #Logs DMs to bot
-            await msg.send("My commands are only accessable in a guild.")
+            # Logs DMs to bot
+            await commandlog.send(f"{msg.author.name}#{msg.author.discriminator} ({msg.author.id}): {msg.content}")
             return
 
         if msg.guild.id in config.serverblacklist:
