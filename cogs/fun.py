@@ -252,6 +252,15 @@ class Fun_Commands:
         """ sends a random fact """
         await self.factapi(ctx, 'https://nekos.life/api/v2/fact', 'fact')
 
+    @commands.command()
+    async def nuke(self, ctx, nukechannel: discord.Channel = None):
+        """ Nuke a channel (Based on ID) """
+        if nukechannel is None:
+            nukechannel = ctx.Channel
+        nukechannel.send(f"{ctx.author.username}#{ctx.author.discriminator} just launched a nuke on this channel from the {ctx.guild.name} server!")
+        ctx.send(f"I launched a nuke on the {nukechannel.name} channel!")
+
+
 
 def setup(bot):
     bot.add_cog(Fun_Commands(bot))
