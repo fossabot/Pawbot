@@ -253,6 +253,5 @@ class Fun_Commands:
         await self.factapi(ctx, 'https://nekos.life/api/v2/fact', 'fact')
 
 
-
 def setup(bot):
     bot.add_cog(Fun_Commands(bot))
