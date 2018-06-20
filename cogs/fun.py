@@ -253,9 +253,14 @@ class Fun_Commands:
         await self.factapi(ctx, 'https://nekos.life/api/v2/fact', 'fact')
 
     @commands.command()
-    async def rate(self, ctx):
+    async def bamboozle(self, ctx):
         """ You just got bamboozled! """
-        await ctx.send(f"{ctx.author.name} just got hecking bamboozled!")
+        await ctx.send(f"**{ctx.author.name}** just got heckin' bamboozled!")
+
+    @commands.command(hidden=True)
+    async def highcontrastphotooffruitfloatingthreateninglyinthedark(self, ctx):
+        """ .. """
+        await ctx.send(f"https://imgur.com/gtm1VKQ")
 
 
 def setup(bot):
