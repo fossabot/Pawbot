@@ -6,8 +6,7 @@ from utils import permissions, default
 
 config = default.get("config.json")
 description = """
-Code base from AlexFlipnote
-Edited by lyricalpaws
+E
 """
 
 

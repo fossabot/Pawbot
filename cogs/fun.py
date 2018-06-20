@@ -252,6 +252,11 @@ class Fun_Commands:
         """ sends a random fact """
         await self.factapi(ctx, 'https://nekos.life/api/v2/fact', 'fact')
 
+    @commands.command()
+    async def rate(self, ctx, *):
+        """ You just got bamboozled! """
+        await ctx.send(f"{ctx.author.name} just got hecking bamboozled!")
+
 
 def setup(bot):
     bot.add_cog(Fun_Commands(bot))
