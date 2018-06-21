@@ -91,19 +91,6 @@ class Moderator:
     @commands.command()
     @commands.guild_only()
     @permissions.has_permissions(ban_members=True)
-    async def massban(self, ctx, reason: ActionReason, *members: MemberID):
-        """ Mass bans multiple members from the server. """
-
-        try:
-            for member_id in members:
-                await ctx.guild.ban(discord.Object(id=member_id), reason=default.responsible(ctx.author, reason))
-            await ctx.send(default.actionmessage("massbanned", mass=True))
-        except Exception as e:
-            await ctx.send(e)
-
-    @commands.command()
-    @commands.guild_only()
-    @permissions.has_permissions(ban_members=True)
     async def unban(self, ctx, member: MemberID, *, reason: str = None):
         """ Bans a user from the current server. """
         try:
@@ -165,7 +152,7 @@ class Moderator:
 
     @find.command(name="playing")
     async def find_playing(self, ctx, *, search: str):
-        result = [f"{i} | {i.game.name}\r\n" for i in ctx.guild.members if (i.game is not None) and (search.lower() in i.game.name.lower())]
+        result = [f"{i} | {i.activity.name}\r\n" for i in ctx.guild.members if (i.activity is not None) and (search.lower() in i.activity.name.lower()) and (not i.bot)]
         if len(result) == 0:
             return await ctx.send("Your search result was empty...")
         data = BytesIO(''.join(result).encode('utf-8'))
