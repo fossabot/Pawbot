@@ -3,6 +3,7 @@ import discord
 import json
 import requests
 import io
+import secrets
 
 from io import BytesIO
 from discord.ext import commands
@@ -261,6 +262,13 @@ class Fun_Commands:
     async def highcontrastphotooffruitfloatingthreateninglyinthedark(self, ctx):
         """ .. """
         await ctx.send(f"https://imgur.com/gtm1VKQ")
+
+    @commands.command()
+    async def password(self, ctx):
+        """ Generates a random password string for you """
+        if hasattr(ctx, 'guild') and ctx.guild is not None:
+            await ctx.send(f"Sending you a private message with your random generated password **{ctx.author.name}**")
+        await ctx.author.send(f"🎁 **Here is your password:**\n{secrets.token_urlsafe(18)}")
 
 
 def setup(bot):
