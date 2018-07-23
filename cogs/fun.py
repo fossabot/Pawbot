@@ -263,7 +263,7 @@ class Fun_Commands:
         """ .. """
         await ctx.send("https://i.imgur.com/gtm1VKQ.jpg")
 
-    @commands.command(hidden=true)
+    @commands.command(hidden=True)
     async def lighttheme(self, ctx):
         """ E """
         await ctx.send("Ew https://i.imgur.com/fbIE97N.png")
