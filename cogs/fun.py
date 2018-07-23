@@ -261,7 +261,12 @@ class Fun_Commands:
     @commands.command(hidden=True)
     async def highcontrastphotooffruitfloatingthreateninglyinthedark(self, ctx):
         """ .. """
-        await ctx.send(f"https://imgur.com/gtm1VKQ")
+        await ctx.send("https://i.imgur.com/gtm1VKQ.jpg")
+
+    @commands.command(hidden=true)
+    async def lighttheme(self, ctx):
+        """ E """
+        await ctx.send("https://i.imgur.com/fbIE97N.png")
 
     @commands.command()
     async def password(self, ctx):
