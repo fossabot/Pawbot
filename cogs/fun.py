@@ -266,7 +266,7 @@ class Fun_Commands:
     @commands.command(hidden=true)
     async def lighttheme(self, ctx):
         """ E """
-        await ctx.send("https://i.imgur.com/fbIE97N.png")
+        await ctx.send("Ew https://i.imgur.com/fbIE97N.png")
 
     @commands.command()
     async def password(self, ctx):
