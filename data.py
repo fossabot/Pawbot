@@ -1,44 +1,17 @@
 from utils import permissions, default
+from discord.ext.commands import AutoShardedBot
+import discord
 
 config = default.get("config.json")
-
-from discord.ext.commands import AutoShardedBot
 
 
 class Bot(AutoShardedBot):
     def __init__(self, *args, prefix=None, **kwargs):
         super().__init__(*args, **kwargs)
+        self.db = kwargs.pop("db")
 
     async def on_message(self, msg):
         if not self.is_ready() or msg.author.bot or not permissions.can_send(msg):
             return
-
-        if msg.guild is None:
-            commandlog = self.get_channel(449708433659265045)
-            # Logs DMs to bot
-            await commandlog.send(f"{msg.author.name}#{msg.author.discriminator} ({msg.author.id}): {msg.content}")
-            return
-
-        if msg.guild.id in config.serverblacklist:
-            return
-        elif msg.author.id in config.userblacklist:
-            return
-
-        #This logs any commands, no other messages are logged.
-        if msg.content.startswith(tuple(config.prefix)):
-            commandlog = self.get_channel(448947806196203520)
-            await commandlog.send(f"`{msg.author.name}#{msg.author.discriminator}` `({msg.author.id})`, `{msg.guild.name}` (`{msg.guild.id}`): `{msg.content}`")
         else:
-            pass
-
-        if msg.channel.id == config.uplinkchannel:
-            connectionchannel = self.get_channel(config.downlink)
-
-            await connectionchannel.send(f'{msg.author.name}#{msg.author.discriminator}: {msg.content}')
-
-        if msg.channel.id == config.downlink:
-            connectionchannel1 = self.get_channel(config.uplinkchannel)
-
-            await connectionchannel1.send(f'{msg.author.name}#{msg.author.discriminator}: {msg.content}')
-
-        await self.process_commands(msg)
+            await self.process_commands(msg)
