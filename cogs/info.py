@@ -54,7 +54,6 @@ class Information:
 
         await ctx.send(f"**{ctx.author.name}**, this is my home.")
 
-
     @commands.command(aliases=['info', 'stats', 'status'])
     @commands.guild_only()
     async def about(self, ctx):

@@ -48,7 +48,6 @@ class Fun_Commands:
 
         await ctx.send(f'**Did you know?** 🤔\n\n{r[endpoint]}')
 
-
     @commands.command()
     @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
     async def cat(self, ctx):
