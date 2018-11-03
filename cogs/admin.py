@@ -119,7 +119,28 @@ class Admin:
         except aiohttp.InvalidURL:
             await ctx.send("The URL is invalid...")
         except discord.InvalidArgument:
-            await ctx.send("This URL does not contain a useable image")
+            await ctx.send("This URL does not contain a usable image")
+        except discord.HTTPException as err:
+            await ctx.send(err)
+
+    @commands.command()
+    @commands.check(repo.is_owner)
+    async def steal(self, ctx, emojiname, url: str = None):
+        """Steals emojis"""
+        if url is None and len(ctx.message.attachments) == 1:
+            url = ctx.message.attachments[0].url
+        else:
+            url = url.strip('<>')
+
+        try:
+            botguild = self.bot.get_guild(423879867457863680)
+            bio = await http.get(url, res_method="read")
+            await botguild.create_custom_emoji(emojiname, bio)
+            await ctx.send(f"Successfully stolen emoji.")
+        except aiohttp.InvalidURL:
+            await ctx.send("The URL is invalid...")
+        except discord.InvalidArgument:
+            await ctx.send("This URL does not contain a usable image")
         except discord.HTTPException as err:
             await ctx.send(err)
 
