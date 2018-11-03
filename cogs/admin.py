@@ -135,7 +135,7 @@ class Admin:
         try:
             botguild = self.bot.get_guild(423879867457863680)
             bio = await http.get(url, res_method="read")
-            await botguild.create_custom_emoji(emojiname, bio)
+            await botguild.create_custom_emoji(name=emojiname, image=bio)
             await ctx.send(f"Successfully stolen emoji.")
         except aiohttp.InvalidURL:
             await ctx.send("The URL is invalid...")
