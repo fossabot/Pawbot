@@ -8,7 +8,7 @@ from utils import permissions, default
 
 config = default.get("config.json")
 description = """
-A bot for the Bui's Art Society!
+A discord bot written in python, made for managing communities.
 """
 
 

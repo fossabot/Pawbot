@@ -44,7 +44,7 @@ class Moderator:
     @commands.guild_only()
     async def warns(self, ctx, member: None):
         """ Checks user warns """
-        query = "SELECT warnings FROM warnings WHERE serverid = $1 AND WHERE userid = $2;"
+        query = "SELECT warnings FROM warnings WHERE serverid = $1 AND userid = $2;"
         row = await self.bot.db.fetchrow(query, ctx.server.id, ctx.author.id)
         if row is None:
             query = "INSERT INTO warnings VALUES ($1, $2, 0);"
@@ -58,17 +58,17 @@ class Moderator:
     @permissions.has_permissions(ban_members=True)
     async def warn(self, ctx, member: discord.Member, amount: int = None):
         """ Gives a user a set amount of warnings """
-        query = "SELECT warnings FROM warnings WHERE serverid = $1 AND WHERE userid = $2;"
+        query = "SELECT warnings FROM warnings WHERE serverid = $1 AND userid = $2;"
         row = await self.bot.db.fetchrow(query, ctx.server.id, member.id)
         if row is None:
             query = "INSERT INTO warnings VALUES ($1, $2, {amount});"
             await self.bot.db.execute(query, ctx.server.id, member.id)
             await ctx.send(f"I added **{amount}** to {member.mention}'s warns! They now have **{amountgiven}**.")
         else:
-            query = "SELECT warnings FROM warnings WHERE serverid = $1 AND WHERE userid = $2;"
+            query = "SELECT warnings FROM warnings WHERE serverid = $1 AND userid = $2;"
             row = await self.bot.db.fetchrow(query, ctx.server.id, member.id)
             amountgiven = int(row['warnings'] + amount)
-            query = "UPDATE warnings SET warnings = $1 WHERE serverid = $2 AND WHERE userid = $3;"
+            query = "UPDATE warnings SET warnings = $1 WHERE serverid = $2 AND userid = $3;"
             await self.bot.db.execute(query, amountgiven, ctx.server.id, member.id)
             await ctx.send(f"I added **{amount}** to {member.mention}'s warns! They now have **{amountgiven}**.")
 
@@ -323,7 +323,7 @@ class Moderator:
     @commands.command()
     @commands.guild_only()
     @permissions.has_permissions(manage_roles=True)
-    async def giverole(self, ctx, member: discord.Member, *, rolename: str = None):
+    async def ra(self, ctx, member: discord.Member, *, rolename: str = None):
         """ Gives the role to the user. """
         try:
             role = discord.utils.get(ctx.guild.roles, name=rolename)
@@ -335,7 +335,7 @@ class Moderator:
     @commands.command()
     @commands.guild_only()
     @permissions.has_permissions(manage_roles=True)
-    async def removerole(self, ctx, member: discord.Member, *, rolename: str = None):
+    async def rr(self, ctx, member: discord.Member, *, rolename: str = None):
         """ Removes the role from a user. """
         try:
             role = discord.utils.get(ctx.guild.roles, name=rolename)
