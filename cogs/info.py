@@ -44,7 +44,7 @@ class Information:
     @commands.command(aliases=['joinme', 'join', 'botinvite'])
     async def invite(self, ctx):
         """ Invite me to your server """
-        await ctx.send(f"**{ctx.author.name}**, use this URL to invite me\n<https://discordapp.com/oauth2/authorize?client_id=297391906936193030&scope=bot&permissions=8>")
+        await ctx.send(f"**{ctx.author.name}**, use this URL to invite me\n<https://discordapp.com/oauth2/authorize?client_id=460383314973556756&scope=bot&permissions=469888118>")
 
     @commands.command(aliases=['supportserver', 'feedbackserver'])
     async def botserver(self, ctx):
