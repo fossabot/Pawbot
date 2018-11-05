@@ -9,7 +9,7 @@
 
 
 # PawBot
-#### This Project uses the rewrite version of [discord.py](https://github.com/Rapptz/discord.py/tree/rewrite) as well as [Python 3.6](https://www.python.org/downloads/release/python-360/) and [Posgresql 11](https://www.postgresql.org/)or higher. Please keep this in mind when using the bot.
+#### This Project uses the rewrite version of [discord.py](https://github.com/Rapptz/discord.py/tree/rewrite) as well as [Python 3.6](https://www.python.org/downloads/release/python-360/) and [Posgresql 11](https://www.postgresql.org/) or higher. Please keep this in mind when using the bot.
 
 ## Acknowledgements
 Thanks to
