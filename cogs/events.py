@@ -36,14 +36,8 @@ class Events:
             _traceback = ''.join(_traceback)
             error = '```py\n{2}{0}: {3}\n```'.format(type(err).__name__, ctx.message.content, _traceback, err)
             logchannel = self.bot.get_channel(508420200815656966)
-            webhook = DiscordWebhook(url='https://discordapp.com/api/webhooks/508419421275029504/IHd-2Y3C-l-619PduO-Eq0SivsZK4oNp6DE355JzG7qZdre-MvXdZGcki6yoQW1g6wYE')
-            embed = DiscordEmbed(title=f'There was an error!', description=f'{error}', color=14752792)
-            embed.set_author(name=f'PawBot', url='https://discordapp.com/oauth2/authorize?client_id=460383314973556756&scope=bot&permissions=469888118', icon_url='https://cdn.discordapp.com/avatars/460383314973556756/d96ff7682f89483c4864f7af4b3a096c.png?size=2048')
-            embed.set_timestamp()
-            webhook.add_embed(embed)
             await ctx.send("There was an error in processing the command, our staff have been notified.")
             await logchannel.send(f"`ERROR`\n{error}\nRoot server: {ctx.guild.name} ({ctx.guild.id})\nRoot user: {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})")
-            webhook.execute()
 
         elif isinstance(err, errors.CheckFailure):
             pass
@@ -57,8 +51,7 @@ class Events:
     async def on_ready(self):
         if not hasattr(self.bot, 'uptime'):
             self.bot.uptime = datetime.utcnow()
-
-        webhook = DiscordWebhook(url='https://discordapp.com/api/webhooks/508414437720326145/I1pvMzsgthPLdjU3NbM2H-9pzCDqmx7k531GOHnE9056XwxmGprMg1YsMrJCPOLs0YmY')
+        webhook = DiscordWebhook(url=f'{self.config.welcomewebhook}')
         embed = DiscordEmbed(title=f'Reconnected, Online and Operational!', description='Ready Info', color=5810826)
         embed.set_author(name=f'PawBot', url='https://discordapp.com/oauth2/authorize?client_id=460383314973556756&scope=bot&permissions=469888118', icon_url='https://cdn.discordapp.com/avatars/460383314973556756/d96ff7682f89483c4864f7af4b3a096c.png?size=2048')
         embed.add_embed_field(name='Stats', value=f'Guilds:** {len(self.bot.guilds)}**\nUsers:** {len(self.bot.users)}**\n\o/')
