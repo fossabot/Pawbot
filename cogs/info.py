@@ -2,6 +2,7 @@ import time
 import discord
 import psutil
 import os
+import asyncio
 
 from discord.ext import commands
 from datetime import datetime
@@ -59,17 +60,19 @@ class Information:
     async def about(self, ctx):
         """ About the bot """
         ramUsage = self.process.memory_full_info().rss / 1024**2
+        avgmembers = round(len(self.bot.users) / len(self.bot.guilds))
 
-        embed = discord.Embed(colour=ctx.me.top_role.colour)
+        embed = discord.Embed(title=f"About **{ctx.bot.user.name}** | **{repo.version}**", colour=ctx.me.colour, url="https://discordapp.com/oauth2/authorize?client_id=460383314973556756&scope=bot&permissions=469888118",)
         embed.set_thumbnail(url=ctx.bot.user.avatar_url)
         embed.add_field(name="Uptime", value=self.get_bot_uptime(), inline=False)
         embed.add_field(name="Developer", value="Paws#0001", inline=True)
         embed.add_field(name="Library", value="discord.py", inline=True)
         embed.add_field(name="Commands loaded", value=len([x.name for x in self.bot.commands]), inline=True)
-        embed.add_field(name="Servers", value=len(ctx.bot.guilds), inline=True)
+        embed.add_field(name="Servers", value=f"{len(ctx.bot.guilds)} (average: {avgmembers} users/server )", inline=True)
         embed.add_field(name="RAM", value=f"{ramUsage:.2f} MB", inline=True)
+        embed.add_field(name="Support", value=f"[Here]({repo.invite})", inline=True)
 
-        await ctx.send(content=f"ℹ About **{ctx.bot.user.name}** | **{repo.version}**", embed=embed)
+        await ctx.send(embed=embed)
 
     @commands.command()
     async def avatar(self, ctx, user: discord.Member = None):
@@ -77,22 +80,10 @@ class Information:
         if user is None:
             user = ctx.author
 
-        embed = discord.Embed(colour=0x00ddff)
+        embed = discord.Embed(colour=249742)
         embed.description = f"Avatar to **{user.name}**\nClick [here]({user.avatar_url}) to get image"
         embed.set_thumbnail(url=user.avatar_url)
         await ctx.send(embed=embed)
-
-    @commands.command()
-    @commands.guild_only()
-    async def roles(self, ctx):
-        """ Get all roles in current server """
-        allroles = ""
-
-        for num, role in enumerate(sorted(ctx.guild.roles, reverse=True), start=1):
-            allroles += f"[{str(num).zfill(2)}] {role.id}\t{role.name}\t[ Users: {len(role.members)} ]\r\n"
-
-        data = BytesIO(allroles.encode('utf-8'))
-        await ctx.send(content=f"Roles in **{ctx.guild.name}**", file=discord.File(data, filename=f"{default.timetext('Roles')}"))
 
     @commands.command()
     @commands.guild_only()
@@ -101,7 +92,7 @@ class Information:
         if user is None:
             user = ctx.author
 
-        embed = discord.Embed(colour=0x00ddff)
+        embed = discord.Embed(colour=249742)
         embed.set_thumbnail(url=user.avatar_url)
         embed.description = f'**{user}** joined **{ctx.guild.name}**\n{default.date(user.joined_at)}'
         await ctx.send(embed=embed)
@@ -113,7 +104,7 @@ class Information:
         if ctx.invoked_subcommand is None:
             findbots = sum(1 for member in ctx.guild.members if member.bot)
 
-            embed = discord.Embed(colour=0x00ddff)
+            embed = discord.Embed(colour=249742)
             embed.set_thumbnail(url=ctx.guild.icon_url)
             embed.add_field(name="Server Name", value=ctx.guild.name, inline=True)
             embed.add_field(name="Server ID", value=ctx.guild.id, inline=True)
@@ -130,7 +121,7 @@ class Information:
         if user is None:
             user = ctx.author
 
-        embed = discord.Embed(colour=0x00ddff)
+        embed = discord.Embed(colour=249742)
         embed.set_thumbnail(url=user.avatar_url)
 
         embed.add_field(name="Full name", value=user, inline=True)
@@ -146,6 +137,29 @@ class Information:
             embed.add_field(name="Joined this server", value=default.date(user.joined_at), inline=True)
 
         await ctx.send(content=f"ℹ About **{user.id}**", embed=embed)
+
+    @commands.command()
+    @commands.guild_only()
+    async def poll(self, ctx, time, *, question):
+        """
+        Creates a poll
+        """
+        await ctx.message.delete()
+        time = int(time)
+        pollmsg = await ctx.send(f"{ctx.message.author.mention} created a poll that will end after {time} seconds!\n**{question}**\n\nReact with :thumbsup: or :thumbsdown: to vote!")
+        await pollmsg.add_reaction('👍')
+        await pollmsg.add_reaction('👎')
+        await asyncio.sleep(time)
+        reactiongrab = await ctx.channel.get_message(pollmsg.id)
+        for reaction in reactiongrab.reactions:
+            if reaction.emoji == str('👍'):
+                upvote_count = reaction.count
+            else:
+                if reaction.emoji == str('👎'):
+                    downvote_count = reaction.count
+                else:
+                    pass
+        await pollmsg.edit(content=f"{ctx.message.author.mention} created a poll that will end after {time} seconds!\n**{question}**\n\nTime's up!\n👍 = {upvote_count-1}\n\n👎 = {downvote_count-1}")
 
 
 def setup(bot):
