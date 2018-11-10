@@ -1,11 +1,12 @@
 {
   "token": "",
   "owners": [],
-  "join_message": "I have joined!",
-  "prefix": ["!"],
+  "prefix": [""],
+  "guildBlacklist": [""],
+  "userBlacklist": [""],
   "playing": "games!",
-  "uplinkchannel": ,
-  "downlink": ,
-  "serverblacklist": [],
-  "userblacklist": []
+  "database": "",
+  "dbname": "",
+  "dbpass": "",
+  "welcomewebhook": ""
 }
