@@ -26,6 +26,7 @@ async def run():
 
     await db.execute("CREATE TABLE IF NOT EXISTS warnings(serverid bigint, userid bigint, warnings int);")
     await db.execute("CREATE TABLE IF NOT EXISTS modlogs(serverid bigint, caseid bigint, casenumber int, casetype varchar, target bigint, moderator bigint, reason varchar);")
+    await db.execute("CREATE TABLE IF NOT EXISTS adminpanel(autorole bigint, nsfw bigint, invites int, lockdown varchar, joins bigint, welcomechan bigint, welcomemsg varchar, leavechan bigint, leavemsg varchar, autorole bigint, adchan bigint, modlog bigint);")
 
     bot = Bot(command_prefix=config.prefix, pm_help=True, help_attrs=help_attrs, formatter=HelpFormat(), db=db)
     try:
