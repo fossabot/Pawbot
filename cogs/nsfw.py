@@ -10,7 +10,7 @@ from utils import lists, permissions, http, default
 from utils.lists import *
 
 
-class NSFW_Commands:
+class NSFW:
     def __init__(self, bot):
         self.bot = bot
         self.config = default.get("config.json")
@@ -21,7 +21,7 @@ class NSFW_Commands:
         except json.JSONDecodeError:
             return await ctx.send("Couldn't find anything from the API")
 
-        embed = discord.Embed(colour=0xff50e0)
+        embed = discord.Embed(colour=249742)
         embed.set_image(url=r[endpoint])
         await ctx.send(embed=embed)
 
@@ -59,4 +59,4 @@ class NSFW_Commands:
 
 
 def setup(bot):
-    bot.add_cog(NSFW_Commands(bot))
+    bot.add_cog(NSFW(bot))
