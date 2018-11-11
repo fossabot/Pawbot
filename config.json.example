@@ -9,4 +9,5 @@
   "dbname": "",
   "dbpass": "",
   "welcomewebhook": ""
+  "suggwebhook": ""
 }
