@@ -3,15 +3,13 @@ import discord
 import json
 import requests
 import io
-import secrets
 
 from io import BytesIO
 from discord.ext import commands
 from utils import lists, permissions, http, default
-from utils.lists import *
 
 
-class Fun_Commands:
+class Fun:
     def __init__(self, bot):
         self.bot = bot
         self.config = default.get("config.json")
@@ -28,7 +26,7 @@ class Fun_Commands:
         except json.JSONDecodeError:
             return await ctx.send("Couldn't find anything from the API")
 
-        embed = discord.Embed(colour=0x00ddff)
+        embed = discord.Embed(colour=249742)
         embed.set_image(url=r[endpoint])
         await ctx.send(embed=embed)
 
@@ -102,39 +100,6 @@ class Fun_Commands:
             decimals = 0
 
         await ctx.send(f"I'd rate {thing} a **{numbers}.{decimals} / 100**")
-
-    @commands.command()
-    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
-    async def urban(self, ctx, *, search: str):
-        """ Find the 'best' definition to your words """
-        if not permissions.can_embed(ctx):
-            return await ctx.send("I cannot send embeds here ;-;")
-
-        url = await http.get(f'http://api.urbandictionary.com/v0/define?term={search}', res_method="json")
-
-        if url is None:
-            return await ctx.send("I think the API broke...")
-
-        count = len(url['list'])
-        if count == 0:
-            return await ctx.send("Couldn't find your search in the dictionary...")
-        result = url['list'][random.randint(0, count - 1)]
-
-        definition = result['definition']
-        if len(definition) >= 1000:
-                definition = definition[:1000]
-                definition = definition.rsplit(' ', 1)[0]
-                definition += '...'
-
-        embed = discord.Embed(colour=0xC29FAF, description=f"**{result['word']}**\n*by: {result['author']}*")
-        embed.add_field(name='Definition', value=definition, inline=False)
-        embed.add_field(name='Example', value=result['example'], inline=False)
-        embed.set_footer(text=f"👍 {result['thumbs_up']} | 👎 {result['thumbs_down']}")
-
-        try:
-            await ctx.send(embed=embed)
-        except discord.Forbidden:
-            await ctx.send("I found something, but have no access to post it... [Embed permissions]")
 
     @commands.command(aliases=['howhot', 'hot'])
     async def hotcalc(self, ctx, user: discord.Member = None):
@@ -267,13 +232,6 @@ class Fun_Commands:
         """ E """
         await ctx.send("Ew https://i.imgur.com/fbIE97N.png")
 
-    @commands.command()
-    async def password(self, ctx):
-        """ Generates a random password string for you """
-        if hasattr(ctx, 'guild') and ctx.guild is not None:
-            await ctx.send(f"Sending you a private message with your random generated password **{ctx.author.name}**")
-        await ctx.author.send(f"🎁 **Here is your password:**\n{secrets.token_urlsafe(18)}")
-
 
 def setup(bot):
-    bot.add_cog(Fun_Commands(bot))
+    bot.add_cog(Fun(bot))
