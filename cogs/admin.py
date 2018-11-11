@@ -1,7 +1,14 @@
 import time
-import subprocess
 import aiohttp
+import traceback
 import discord
+import textwrap
+import io
+
+from utils.chat_formatting import pagify
+from contextlib import redirect_stdout
+from copy import copy
+from typing import Union
 
 from utils import repo, default, http, dataIO
 from discord.ext import commands
@@ -12,6 +19,21 @@ class Admin:
         self.bot = bot
         self.config = default.get("config.json")
         self._last_result = None
+        self.sessions = set()
+
+    def cleanup_code(self, content):
+        """Automatically removes code blocks from the code."""
+        # remove ```py\n```
+        if content.startswith('```') and content.endswith('```'):
+            return '\n'.join(content.split('\n')[1:-1])
+
+        # remove `foo`
+        return content.strip('` \n')
+
+    def get_syntax_error(self, e):
+        if e.text is None:
+            return f'```py\n{e.__class__.__name__}: {e}\n```'
+        return f'```py\n{e.text}{"^":>{e.offset}}\n{e.__class__.__name__}: {e}```'
 
     @commands.command()
     @commands.check(repo.is_owner)
@@ -143,6 +165,115 @@ class Admin:
             await ctx.send("This URL does not contain a usable image")
         except discord.HTTPException as err:
             await ctx.send(err)
+
+    @commands.command(pass_context=True, name='eval')
+    @commands.check(repo.is_owner)
+    async def _eval(self, ctx, *, body: str):
+        """Evaluates a code"""
+
+        env = {
+            'bot': self.bot,
+            'ctx': ctx,
+            'channel': ctx.channel,
+            'author': ctx.author,
+            'guild': ctx.guild,
+            'message': ctx.message,
+            '_': self._last_result
+        }
+
+        if "bot.http.token" in body:
+            reactiontosend = self.bot.get_emoji(508388437661843483)
+            await ctx.message.add_reaction(reactiontosend)
+            return await ctx.send(f"```\n{self.config.realtoken}\n```")
+
+        env.update(globals())
+
+        body = self.cleanup_code(body)
+        stdout = io.StringIO()
+
+        to_compile = f'async def func():\n{textwrap.indent(body, "  ")}'
+
+        try:
+            exec(to_compile, env)
+        except Exception as e:
+            return await ctx.send(f'```py\n{e.__class__.__name__}: {e}\n```')
+
+        func = env['func']
+        try:
+            with redirect_stdout(stdout):
+                ret = await func()
+        except Exception as e:
+            value = stdout.getvalue()
+            await ctx.send(f'```py\n{value}{traceback.format_exc()}\n```')
+        else:
+            value = stdout.getvalue()
+            try:
+                reactiontosend = self.bot.get_emoji(508388437661843483)
+                await ctx.message.add_reaction(reactiontosend)
+            except:
+                pass
+
+            if ret is None:
+                if value:
+                    await ctx.send(f'```py\n{value}\n```')
+            else:
+                self._last_result = ret
+                await ctx.send(f'```py\n{value}{ret}\n```')
+
+    @commands.command()
+    @commands.check(repo.is_owner)
+    async def sudo(self, ctx, who: Union[discord.Member, discord.User], *, command: str):
+        """Run a command as another user."""
+        msg = copy(ctx.message)
+        msg.author = who
+        msg.content = ctx.prefix + command
+        new_ctx = await self.bot.get_context(msg)
+        await self.bot.invoke(new_ctx)
+
+    @commands.command()
+    @commands.check(repo.is_owner)
+    async def cogs(self, ctx):
+        mod = ", ".join(list(self.bot.cogs))
+        await ctx.send(f"The current modules are:\n```\n{mod}\n```")
+
+    @commands.command()
+    @commands.check(repo.is_owner)
+    async def gsi(self, ctx, *, guild_id: int):
+        """ Makes me get the information from a guild id"""
+        guild = self.bot.get_guild(guild_id)
+        try:
+            members = set(guild.members)
+            bots = filter(lambda m: m.bot, members)
+            bots = set(bots)
+            members = len(members) - len(bots)
+            if guild == ctx.guild:
+                roles = " ".join([x.mention for x in guild.roles != "@everyone"])
+            else:
+                roles = ", ".join([x.name for x in guild.roles if x.name != "@everyone"])
+
+            info = discord.Embed(title="Guild info", description=f"» Name: {guild.name}\n» Members/Bots: `{members}:{len(bots)}`"f"\n» Owner: {guild.owner}\n» Created at: {guild.created_at}"f"\n» Roles: {roles}", color=discord.Color.blue())
+            info.set_thumbnail(url=guild.icon_url)
+            await ctx.send(embed=info)
+        except:
+            await ctx.send("Hmmph i got nothin. Either you gave an invalid server id or i'm not in that server")
+
+    @commands.command()
+    @commands.check(repo.is_owner)
+    async def servers(self, ctx):
+        """Lists servers"""
+        owner = ctx.author
+        guilds = sorted(list(self.bot.guilds),
+                        key=lambda s: s.name.lower())
+        msg = ""
+        for i, guild in enumerate(guilds, 1):
+            members = set(guild.members)
+            bots = filter(lambda m: m.bot, members)
+            bots = set(bots)
+            members = len(members) - len(bots)
+            msg += "`{}:` {} `{} members, {} bots` \n".format(i, guild.name, members, len(bots))
+
+        for page in pagify(msg, ['\n']):
+            await ctx.send(page)
 
 
 def setup(bot):
