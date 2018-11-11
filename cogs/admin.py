@@ -36,6 +36,18 @@ class Admin:
         return f'```py\n{e.text}{"^":>{e.offset}}\n{e.__class__.__name__}: {e}```'
 
     @commands.command()
+    async def amiadmin(self, ctx):
+        """ Are you admin? """
+        if ctx.author.id in self.config.owners:
+            await ctx.send(f"Yes **{ctx.author.name}** you are admin! ✅")
+        elif ctx.author.id in self.config.contributors:
+            await ctx.send(f"No, but you're a contributor **{ctx.author.name}** 💙")
+        elif ctx.author.id in self.config.friends:
+            await ctx.send(f"No, but you're a friend of Paws **{ctx.author.name}** 💜")
+        else:
+            await ctx.send(f"No, heck off **{ctx.author.name}**.")
+
+    @commands.command()
     @commands.check(repo.is_owner)
     async def reload(self, ctx, name: str):
         """ Reloads an extension. """
