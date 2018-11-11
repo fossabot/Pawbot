@@ -1,6 +1,7 @@
 import base64
 import binascii
 import codecs
+import secrets
 
 from discord.ext import commands
 
@@ -125,6 +126,13 @@ class Encryption:
             await self.encryptout(ctx, "ASCII85 -> Text", base64.a85decode(input.encode('UTF-8')))
         except Exception as e:
             await ctx.send("Invalid ASCII85...")
+
+    @commands.command()
+    async def password(self, ctx):
+        """ Generates a random password string for you """
+        if hasattr(ctx, 'guild') and ctx.guild is not None:
+            await ctx.send(f"Sending you a private message with your random generated password **{ctx.author.name}**")
+        await ctx.author.send(f"🎁 **Here is your password:**\n{secrets.token_urlsafe(18)}")
 
 
 def setup(bot):
