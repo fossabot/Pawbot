@@ -4,6 +4,7 @@ import json
 import requests
 import io
 
+from random import randint
 from io import BytesIO
 from discord.ext import commands
 from utils import lists, permissions, http, default
@@ -55,8 +56,14 @@ class Fun:
     @commands.command()
     @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
     async def dog(self, ctx):
-        """ Posts a random dog """
+        """ Posts a random dog """  # https://dog.ceo/api/breeds/image/random Fetch!
         await self.randomimageapi(ctx, 'https://random.dog/woof.json', 'url')
+
+    @commands.command()
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
+    async def doggo(self, ctx):
+        """ Posts a random dog """
+        await self.randomimageapi(ctx, 'https://dog.ceo/api/breeds/image/random', 'message')
 
     @commands.command()
     @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
@@ -75,6 +82,30 @@ class Fun:
     async def fox(self, ctx):
         """ Posts a random fox girl """
         await self.randomimageapi(ctx, 'https://nekos.life/api/v2/img/fox_girl', 'url')
+
+    @commands.command()
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
+    async def rabbit(self, ctx):
+        """ Posts a random rabbit """
+        await self.randomimageapi(ctx, f'https://api.chewey-bot.ga/rabbit?auth={self.config.cheweyauth}', 'data')
+
+    @commands.command()
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
+    async def snek(self, ctx):
+        """ Does a heckin snek image """
+        await self.randomimageapi(ctx, f'https://api.chewey-bot.ga/snake?auth={self.config.cheweyauth}', 'data')
+
+    @commands.command()
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
+    async def otter(self, ctx):
+        """ Posts a random otter """
+        await self.randomimageapi(ctx, f'https://api.chewey-bot.ga/otter?auth={self.config.cheweyauth}', 'data')
+
+    @commands.command()
+    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
+    async def birb(self, ctx):
+        """ Posts a random birb """
+        await self.randomimageapi(ctx, f'https://api.chewey-bot.ga/birb?auth={self.config.cheweyauth}', 'data')
 
     @commands.command(aliases=['flip', 'coin'])
     async def coinflip(self, ctx):
@@ -138,14 +169,6 @@ class Fun:
         await ctx.send(f"⬇️ {t_lower}")
 
     @commands.command()
-    async def echo(self, ctx, *, text: str):
-        """
-        Whatever you say!
-        """
-        t_echo = text.replace("@", "@\u200B").replace("&", "&\u200B")
-        await ctx.send(f"{t_echo}")
-
-    @commands.command()
     @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
     async def headpat(self, ctx):
         """Posts a random headpat from headp.at"""
@@ -203,16 +226,6 @@ class Fun:
 
     @commands.command()
     @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
-    async def owoify(self, ctx):
-        """ owo text """
-        text = ctx.message.content[9:] #Really shitty bodge to make this work properly
-        if len(text) == 0 or len(text) > 1500:
-            await ctx.send("That string is too long or too short!")
-            return
-        await self.textapi(ctx, f'https://nekos.life/api/v2/owoify?text={text}', 'owo')
-
-    @commands.command()
-    @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
     async def fact(self, ctx):
         """ sends a random fact """
         await self.factapi(ctx, 'https://nekos.life/api/v2/fact', 'fact')
@@ -231,6 +244,84 @@ class Fun:
     async def lighttheme(self, ctx):
         """ E """
         await ctx.send("Ew https://i.imgur.com/fbIE97N.png")
+
+    @commands.command()
+    @commands.guild_only()
+    async def ship(self, ctx, user : discord.User, *, user2: discord.User=None):
+        """Checks the shiprate for 2 users"""
+        author = ctx.message.author
+        if not user2:
+            user2 = author
+        if not user:
+            await ctx.send("can't ship nothing y'know..")
+        elif user.id == user2.id:
+            await ctx.send("i-i can't ship the same person..")
+        elif user.id == author.id and user2.id == author.id:
+            await ctx.send(f"wow, you're in love with yourself, huh {ctx.author.name}?")
+        elif user == self.bot.user and user2 == author or user2 == self.bot.user and user == author:
+            blushes = ["m-me..? 0////0", "m-me..? >////<"]
+            return await ctx.send(random.choice(blushes))
+
+        else:
+            n = randint(1, 100)
+            if n == 100:
+                bar = "██████████"
+                heart = '💞'
+            elif n >= 90:
+                bar = "█████████."
+                heart = '💕'
+            elif n >= 80:
+                bar = "████████.."
+                heart = '😍'
+            elif n >= 70:
+                bar = "███████..."
+                heart = '💗'
+            elif n >= 60:
+                bar = "██████...."
+                heart = '❤'
+            elif n >= 50:
+                bar = '█████.....'
+                heart = '❤'
+            elif n >= 40:
+                bar = "████......"
+                heart = '💔'
+            elif n >= 30:
+                bar = "███......."
+                heart = '💔'
+            elif n >= 20:
+                bar = "██........"
+                heart = '💔'
+            elif n >= 10:
+                bar = "█........."
+                heart = '💔'
+            elif n < 10:
+                bar = ".........."
+                heart ='🖤'
+            else:
+                bar = ".........."
+                heart ='🖤'
+            name1 = user.name.replace(" ", "")
+            name1 = name1[:int(len(name1) / 2):]
+            name2 = user2.name.replace(" ", "")
+            name2 = name2[int(len(name2) / 2)::]
+            ship = discord.Embed(description=f"**{n}%** **`{bar}`** {heart}", color=ctx.me.colour)
+            ship.title = f"{user.name} x {user2.name}"
+            ship.set_footer(text=f"Shipname: {str(name1 + name2).lower()}")
+            await ctx.send(embed=ship)
+
+    @commands.command(aliases=['👏'])
+    @commands.guild_only()
+    async def emojify(self, ctx, emote, *, text_to_clap: str):
+        """ 👏bottom👏text👏 """
+        clapped_text = text_to_clap.replace("@everyone", f"{emote}everyone").replace("@here", f"{emote}here").replace(" ", f"{emote}")
+        clapped_text = f"{emote}{clapped_text}{emote}"
+        await ctx.send(clapped_text)
+
+    @commands.command()
+    async def owo(self, ctx):
+        """Sends a random owo face"""
+        owo = random.choice(lists.owos)
+        await ctx.send(f"{owo} whats this~?")
 
 
 def setup(bot):
