@@ -4,7 +4,9 @@ import traceback
 import discord
 import textwrap
 import io
+import json
 
+from discord_webhook import DiscordWebhook
 from utils.chat_formatting import pagify
 from contextlib import redirect_stdout
 from copy import copy
@@ -232,14 +234,33 @@ class Admin:
                 self._last_result = ret
                 await ctx.send(f'```py\n{value}{ret}\n```')
 
-    @commands.command()
+    @commands.group(aliases=["as"])
     @commands.check(repo.is_owner)
-    async def sudo(self, ctx, who: Union[discord.Member, discord.User], *, command: str):
-        """Run a command as another user."""
+    async def sudo(self, ctx):
+        """Run a cmd under an altered context
+        """
+        if ctx.invoked_subcommand is None:
+            await ctx.send("...")
+
+    @sudo.command(aliases=["u", "--u", "--user", "user"])
+    @commands.check(repo.is_owner)
+    async def sudo_user(self, ctx, who: Union[discord.Member, discord.User], *, command: str):
+        """Run a cmd under someone else's name
+        """
         msg = copy(ctx.message)
         msg.author = who
         msg.content = ctx.prefix + command
         new_ctx = await self.bot.get_context(msg)
+        await self.bot.invoke(new_ctx)
+
+    @sudo.command(aliases=["c", "--c", "--channel", "channel"])
+    @commands.check(repo.is_owner)
+    async def sudo_channel(self, ctx, id: int, *, command: str):
+        """Run a command as another user."""
+        cmd = copy(ctx.message)
+        cmd.channel = self.bot.get_channel(id)
+        cmd.content = ctx.prefix + command
+        new_ctx = await self.bot.get_context(cmd)
         await self.bot.invoke(new_ctx)
 
     @commands.command()
@@ -286,6 +307,43 @@ class Admin:
 
         for page in pagify(msg, ['\n']):
             await ctx.send(page)
+
+    @commands.command(aliases=["webhooktest"])
+    @commands.check(repo.is_owner)
+    async def whtest(self, ctx, whlink: str):
+        webhook = DiscordWebhook(url=f'{whlink}', content='Test Message')
+        await ctx.message.delete()
+        webhook.execute()
+
+    @commands.group(aliases=["bl"])
+    @commands.check(repo.is_owner)
+    async def blacklist(self, ctx):
+        """Adds a user/guild to the blacklist
+        """
+        if ctx.invoked_subcommand is None:
+            await ctx.send("...")
+
+    @sudo.command()
+    @commands.check(repo.is_owner)
+    async def blacklist_user(self, ctx, id: int = None):
+        """Adds a user to the blacklist
+        """
+
+    @sudo.command()
+    @commands.check(repo.is_owner)
+    async def blacklist_guild(self, ctx, id: int = None):
+        """Adds a guild to the blacklist
+        """
+
+    @commands.command()
+    async def blacklist(self, ctx, id: int):
+        with open("blacklist.json", "r+") as file:
+            content = json.load(file)
+            content["blacklist"].append(id)
+            file.seek(0)
+            json.dump(content, file)
+            file.truncate()
+        await ctx.send(f"I have successfully blacklisted the id **{id}**")
 
 
 def setup(bot):
