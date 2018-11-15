@@ -12,3 +12,15 @@ def is_owner(ctx):
 
 def is_contributor(ctx):
     return ctx.author.id in contributors
+
+
+def has_userID(ctx, userID):
+    return ctx.author.id in userID
+
+
+def has_guildID(ctx, guildID):
+    return ctx.guild.id in guildID
+
+
+def has_channelID(ctx, channelID):
+    return ctx.channel.id in channelID
