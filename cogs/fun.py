@@ -3,11 +3,28 @@ import discord
 import json
 import requests
 import io
+import os
+import string
 
+from PIL import Image
 from random import randint
 from io import BytesIO
 from discord.ext import commands
-from utils import lists, permissions, http, default
+from utils import lists, permissions, http, default, eapi, sfapi
+
+processapi = eapi.processapi
+processshowapi = eapi.processshowapi
+search = sfapi.search
+
+
+class ResultNotFound(Exception):
+    """Used if ResultNotFound is triggered by e* API."""
+    pass
+
+
+class InvalidHTTPResponse(Exception):
+    """Used if non-200 HTTP Response got from server."""
+    pass
 
 
 class Fun:
@@ -151,6 +168,37 @@ class Fun:
             emoji = "💞"
 
         await ctx.send(f"**{user.name}** is **{hot:.2f}%** hot {emoji}")
+
+    @commands.command()
+    async def e926(self, ctx, *args):
+        """Searches e926 with given queries.
+        Arguments:
+        `*args` : list
+        The quer(y/ies)"""
+        msgtoedit = await ctx.send("Searching...")
+        args = ' '.join(args)
+        args = str(args)
+        netloc = "e926"
+        print("------")
+        print("Got command with args: " + args)
+        if "order:score_asc" in args:
+            await ctx.send("I'm not going to fall into that one, silly~")
+            return
+        if "score:" in args:
+            apilink = 'https://e926.net/post/index.json?tags=' + args + '&limit=320'
+        else:
+            apilink = 'https://e926.net/post/index.json?tags=' + args + ' score:>25&limit=320'
+        try:
+            await eapi.processapi(apilink)
+        except ResultNotFound:
+            await ctx.send("Result not found!")
+            return
+        except InvalidHTTPResponse:
+            await ctx.send("We're getting invalid response from the API, please try again later!")
+            return
+        msgtoedit = await ctx.channel.get_message(msgtoedit.id)
+        msgtosend = "Post link: `https://""" + netloc + """.net/post/show/""" + eapi.processapi.imgid + """/`\r\nArtist: `""" + eapi.processapi.imgartist + """`\r\nSource: `""" + eapi.processapi.imgsource + """`\r\nRating: """ + eapi.processapi.imgrating + """\r\nTags: `""" + eapi.processapi.imgtags + """` ...and more\r\nImage link: """ + eapi.processapi.file_link
+        await msgtoedit.edit(content=msgtosend)
 
     @commands.command()
     async def yell(self, ctx, *, text: str):
@@ -322,6 +370,17 @@ class Fun:
         """Sends a random owo face"""
         owo = random.choice(lists.owos)
         await ctx.send(f"{owo} whats this~?")
+
+    @commands.command()
+    async def choose(self, ctx, *args):
+        """Choose one of a lot arguments (Split with |) """
+        args = ' '.join(args)
+        args = str(args)
+        choices = args.split('|')
+        if len(choices) < 2:
+            await ctx.send("You need to send at least 2 argument!")
+            return
+        await ctx.send(random.choice(choices))
 
 
 def setup(bot):
