@@ -6,6 +6,8 @@ from io import BytesIO
 from discord.ext import commands
 from utils import permissions, default
 
+embedenabled = 1
+
 
 class MemberID(commands.Converter):
     async def convert(self, ctx, argument):
@@ -463,6 +465,19 @@ class Moderation:
             await ctx.send(f"👌 I have removed **{member.name}** from the **{role.name}** role!")
         except:
             return
+
+    @commands.command()
+    @commands.guild_only()
+    async def move(self, ctx, msgid: int, channel: discord.TextChannel):
+        msgtodel = await ctx.channel.get_message(msgid)
+        await msgtodel.delete()
+        await ctx.message.delete()
+        if embedenabled is 0 or not permissions.can_embed(ctx):
+            await channel.send(f"```\n{msgtodel.author.name}#{msgtodel.author.discriminator}: {msgtodel.content}\n```")
+        else:
+            embed = discord.Embed(colour=discord.Colour(0x5fa05e), description=f"{msgtodel.content}")
+            embed.set_author(name=f"{msgtodel.author.name}", icon_url=f"{msgtodel.author.avatar_url}")
+            await channel.send(embed=embed)
 
 
 def setup(bot):
