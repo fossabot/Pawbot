@@ -8,10 +8,9 @@
   "prefix": [""],
   "guildBlacklist": [],
   "userBlacklist": [],
-  "playing": "games!",
   "database": "",
   "dbname": "",
   "dbpass": "",
-  "welcomewebhook": ""
+  "welcomewebhook": "",
   "suggwebhook": ""
 }

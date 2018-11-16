@@ -2,11 +2,12 @@ import discord
 import traceback
 import psutil
 import os
+import random
 
 from discord_webhook import DiscordWebhook, DiscordEmbed
 from datetime import datetime
 from discord.ext.commands import errors
-from utils import default
+from utils import default, lists
 
 
 async def send_cmd_help(ctx):
@@ -57,8 +58,8 @@ class Events:
         embed.add_embed_field(name='Stats', value=f'Guilds:** {len(self.bot.guilds)}**\nUsers:** {len(self.bot.users)}**\n\o/')
         embed.set_timestamp()
         webhook.add_embed(embed)
-        await self.bot.change_presence(activity=discord.Game(type=0, name=self.config.playing), status=discord.Status.online)
         webhook.execute()
+        await self.bot.change_presence(activity=discord.Game(type=0, name=random.choice(lists.randomPlayings)), status=discord.Status.online)
 
 
 def setup(bot):

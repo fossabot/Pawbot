@@ -14,3 +14,7 @@ owos = [
     "❆w❆", "❈w❈", "❉w❉", "❊w❊", "❋w❋", "❍w❍", "❏w❏", "❐w❐", "❑w❑", "❒w❒", "◈w◈", "◉w◉", "◊w◊", "○w○", "ФwФ", "фwф", "юwю", "ЮwЮ"
     "#w#", "@w@", "0w0", ";w;", "¢w¢", "×w×", "°w°", "OwO", "owo", "uwu", "UwU", "QwQ", "ОмО", "ОпО", "ОшО", "OnO", "ДwД", "ЖwЖ", "XwX", "qwq", "dwd", "DwD" "ИwИ", "ーwー"
 ]
+
+randomPlayings = [
+    "with OwOs", "with a ball of String", "innocent", "in her burrow!", "with her friends", "in the fields"
+]
