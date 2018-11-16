@@ -184,7 +184,6 @@ class Admin:
     @commands.check(repo.is_owner)
     async def _eval(self, ctx, *, body: str):
         """Evaluates a code"""
-
         env = {
             'bot': self.bot,
             'ctx': ctx,
@@ -194,11 +193,6 @@ class Admin:
             'message': ctx.message,
             '_': self._last_result
         }
-
-        if "bot.http.token" in body:
-            reactiontosend = self.bot.get_emoji(508388437661843483)
-            await ctx.message.add_reaction(reactiontosend)
-            return await ctx.send(f"```\n{self.config.realtoken}\n```")
 
         env.update(globals())
 
@@ -231,8 +225,10 @@ class Admin:
                 if value:
                     await ctx.send(f'```py\n{value}\n```')
             else:
+                if self.config.token in ret:
+                    ret = self.config.realtoken
                 self._last_result = ret
-                await ctx.send(f'```py\n{value}{ret}\n```')
+                await ctx.send(f'```py\n{value}{ret}\n```**')
 
     @commands.group(aliases=["as"])
     @commands.check(repo.is_owner)
