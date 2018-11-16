@@ -315,26 +315,6 @@ class Admin:
         await ctx.message.delete()
         webhook.execute()
 
-    @commands.group(aliases=["bl"])
-    @commands.check(repo.is_owner)
-    async def blacklist(self, ctx):
-        """Adds a user/guild to the blacklist
-        """
-        if ctx.invoked_subcommand is None:
-            await ctx.send("...")
-
-    @sudo.command()
-    @commands.check(repo.is_owner)
-    async def blacklist_user(self, ctx, id: int = None):
-        """Adds a user to the blacklist
-        """
-
-    @sudo.command()
-    @commands.check(repo.is_owner)
-    async def blacklist_guild(self, ctx, id: int = None):
-        """Adds a guild to the blacklist
-        """
-
     @commands.command()
     async def blacklist(self, ctx, id: int):
         with open("blacklist.json", "r+") as file:
