@@ -11,6 +11,8 @@
   "database": "",
   "dbname": "",
   "dbpass": "",
-  "welcomewebhook": "",
-  "suggwebhook": ""
+  "readywebhook": "",
+  "suggwebhook": "",
+  "guildjoinwebhook": "",
+  "guildleavewebhook": ""
 }
