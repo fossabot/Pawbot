@@ -67,14 +67,8 @@ class Events:
     async def on_guild_join(self, guild):
         if not guild.icon_url:
             guildicon = "https://cdn.discordapp.com/attachments/443347566231289856/513380120451350541/2mt196.jpg"
-            async with aiohttp.ClientSession() as session:
-                async with session.get(guildicon) as resp:
-                    avatar_bytes = await resp.read()
         else:
             guildicon = guild.icon_url
-            async with aiohttp.ClientSession() as session:
-                async with session.get(guildicon) as resp:
-                    avatar_bytes = await resp.read()
         findbots = sum(1 for member in guild.members if member.bot)
         findusers = sum(1 for member in guild.members if not member.bot)
         webhook = Webhook(self.config.guildjoinwebhook, is_async=True)
@@ -82,21 +76,14 @@ class Events:
         embed.set_author(name=f'{guild.name}', url='https://discordapp.com/oauth2/authorize?client_id=460383314973556756&scope=bot&permissions=469888118', icon_url=guildicon)
         embed.set_thumbnail(url=guildicon)
         embed.add_field(name='Info', value=f'New guild count: **{len(self.bot.guilds)}**\nOwner: **{guild.owner}**\nUsers/Bot Ratio: **{findusers}/{findbots}**')
-        await webhook.modify(name=guild.name, avatar=avatar_bytes)
-        await webhook.execute(embeds=embed)
+        await webhook.execute(embeds=embed, username=guild.name, avatar_url=guildicon)
         await webhook.close()
 
     async def on_guild_remove(self, guild):
         if not guild.icon_url:
             guildicon = "https://cdn.discordapp.com/attachments/443347566231289856/513380120451350541/2mt196.jpg"
-            async with aiohttp.ClientSession() as session:
-                async with session.get(guildicon) as resp:
-                    avatar_bytes = await resp.read()
         else:
             guildicon = guild.icon_url
-            async with aiohttp.ClientSession() as session:
-                async with session.get(guildicon) as resp:
-                    avatar_bytes = await resp.read()
         findbots = sum(1 for member in guild.members if member.bot)
         findusers = sum(1 for member in guild.members if not member.bot)
         webhook = Webhook(self.config.guildleavewebhook, is_async=True)
@@ -104,8 +91,7 @@ class Events:
         embed.set_author(name=f'{guild.name}', url='https://discordapp.com/oauth2/authorize?client_id=460383314973556756&scope=bot&permissions=469888118', icon_url=guildicon)
         embed.set_thumbnail(url=guildicon)
         embed.add_field(name='Info', value=f'New guild count: **{len(self.bot.guilds)}**\nOwner: **{guild.owner}**\nUsers/Bot Ratio: **{findusers}/{findbots}**')
-        await webhook.modify(name=guild.name, avatar=avatar_bytes)
-        await webhook.execute(embeds=embed)
+        await webhook.execute(embeds=embed, username=guild.name, avatar_url=guildicon)
         await webhook.close()
 
 
