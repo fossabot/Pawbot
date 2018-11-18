@@ -1,10 +1,13 @@
+import dhooks
 import discord
 import traceback
 import psutil
 import os
 import random
+import datetime
+import aiohttp
 
-from discord_webhook import DiscordWebhook, DiscordEmbed
+from dhooks import Webhook, Embed
 from datetime import datetime
 from discord.ext.commands import errors
 from utils import default, lists
@@ -52,14 +55,58 @@ class Events:
     async def on_ready(self):
         if not hasattr(self.bot, 'uptime'):
             self.bot.uptime = datetime.utcnow()
-        webhook = DiscordWebhook(url=f'{self.config.welcomewebhook}')
-        embed = DiscordEmbed(title=f'Reconnected, Online and Operational!', description='Ready Info', color=5810826)
+        webhook = Webhook(self.config.readywebhook, is_async=True)
+        embed = dhooks.Embed(title=f'Reconnected, Online and Operational!', description='Ready Info', color=5810826, timestamp=True)
         embed.set_author(name=f'PawBot', url='https://discordapp.com/oauth2/authorize?client_id=460383314973556756&scope=bot&permissions=469888118', icon_url='https://cdn.discordapp.com/avatars/460383314973556756/d96ff7682f89483c4864f7af4b3a096c.png?size=2048')
-        embed.add_embed_field(name='Stats', value=f'Guilds:** {len(self.bot.guilds)}**\nUsers:** {len(self.bot.users)}**\n\o/')
-        embed.set_timestamp()
-        webhook.add_embed(embed)
-        webhook.execute()
+        embed.add_field(name='Guilds', value=f'**{len(self.bot.guilds)}**', inline=True)
+        embed.add_field(name='Users', value=f'**{len(self.bot.users)}**', inline=True)
+        await webhook.execute(embeds=embed)
+        await webhook.close()
         await self.bot.change_presence(activity=discord.Game(type=0, name=random.choice(lists.randomPlayings)), status=discord.Status.online)
+
+    async def on_guild_join(self, guild):
+        if not guild.icon_url:
+            guildicon = "https://cdn.discordapp.com/attachments/443347566231289856/513380120451350541/2mt196.jpg"
+            async with aiohttp.ClientSession() as session:
+                async with session.get(guildicon) as resp:
+                    avatar_bytes = await resp.read()
+        else:
+            guildicon = guild.icon_url
+            async with aiohttp.ClientSession() as session:
+                async with session.get(guildicon) as resp:
+                    avatar_bytes = await resp.read()
+        findbots = sum(1 for member in guild.members if member.bot)
+        findusers = sum(1 for member in guild.members if not member.bot)
+        webhook = Webhook(self.config.guildjoinwebhook, is_async=True)
+        embed = dhooks.Embed(description=f'I\'ve joined {guild.name}!', color=5810826, timestamp=True)
+        embed.set_author(name=f'{guild.name}', url='https://discordapp.com/oauth2/authorize?client_id=460383314973556756&scope=bot&permissions=469888118', icon_url=guildicon)
+        embed.set_thumbnail(url=guildicon)
+        embed.add_field(name='Info', value=f'New guild count: **{len(self.bot.guilds)}**\nOwner: **{guild.owner}**\nUsers/Bot Ratio: **{findusers}/{findbots}**')
+        await webhook.modify(name=guild.name, avatar=avatar_bytes)
+        await webhook.execute(embeds=embed)
+        await webhook.close()
+
+    async def on_guild_remove(self, guild):
+        if not guild.icon_url:
+            guildicon = "https://cdn.discordapp.com/attachments/443347566231289856/513380120451350541/2mt196.jpg"
+            async with aiohttp.ClientSession() as session:
+                async with session.get(guildicon) as resp:
+                    avatar_bytes = await resp.read()
+        else:
+            guildicon = guild.icon_url
+            async with aiohttp.ClientSession() as session:
+                async with session.get(guildicon) as resp:
+                    avatar_bytes = await resp.read()
+        findbots = sum(1 for member in guild.members if member.bot)
+        findusers = sum(1 for member in guild.members if not member.bot)
+        webhook = Webhook(self.config.guildleavewebhook, is_async=True)
+        embed = dhooks.Embed(description=f'I\'ve left {guild.name}...', color=5810826, timestamp=True)
+        embed.set_author(name=f'{guild.name}', url='https://discordapp.com/oauth2/authorize?client_id=460383314973556756&scope=bot&permissions=469888118', icon_url=guildicon)
+        embed.set_thumbnail(url=guildicon)
+        embed.add_field(name='Info', value=f'New guild count: **{len(self.bot.guilds)}**\nOwner: **{guild.owner}**\nUsers/Bot Ratio: **{findusers}/{findbots}**')
+        await webhook.modify(name=guild.name, avatar=avatar_bytes)
+        await webhook.execute(embeds=embed)
+        await webhook.close()
 
 
 def setup(bot):
