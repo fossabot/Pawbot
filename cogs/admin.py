@@ -6,7 +6,7 @@ import textwrap
 import io
 import json
 
-from dhooks import Webhook, Embed
+from dhooks import Webhook
 from utils.chat_formatting import pagify
 from contextlib import redirect_stdout
 from copy import copy
@@ -22,7 +22,8 @@ class Admin:
         self._last_result = None
         self.sessions = set()
 
-    def cleanup_code(self, content):
+    @staticmethod
+    def cleanup_code(content):
         """Automatically removes code blocks from the code."""
         # remove ```py\n```
         if content.startswith('```') and content.endswith('```'):
@@ -31,7 +32,8 @@ class Admin:
         # remove `foo`
         return content.strip('` \n')
 
-    def get_syntax_error(self, e):
+    @staticmethod
+    def get_syntax_error(e):
         if e.text is None:
             return f'```py\n{e.__class__.__name__}: {e}\n```'
         return f'```py\n{e.text}{"^":>{e.offset}}\n{e.__class__.__name__}: {e}```'
@@ -55,9 +57,8 @@ class Admin:
         try:
             self.bot.unload_extension(f"cogs.{name}")
             self.bot.load_extension(f"cogs.{name}")
-        except Exception as e:
-            await ctx.send(f"```\n{e}```")
-            return
+        except FileNotFoundError as e:
+            return await ctx.send(f"```\n{e}```")
         await ctx.send(f"Reloaded extension **{name}.py**")
 
     @commands.command()
@@ -74,7 +75,7 @@ class Admin:
         """ Reloads an extension. """
         try:
             self.bot.load_extension(f"cogs.{name}")
-        except Exception as e:
+        except FileNotFoundError as e:
             await ctx.send(f"```diff\n- {e}```")
             return
         await ctx.send(f"Loaded extension **{name}.py**")
@@ -85,7 +86,7 @@ class Admin:
         """ Reloads an extension. """
         try:
             self.bot.unload_extension(f"cogs.{name}")
-        except Exception as e:
+        except FileNotFoundError as e:
             await ctx.send(f"```diff\n- {e}```")
             return
         await ctx.send(f"Unloaded extension **{name}.py**")

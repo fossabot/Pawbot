@@ -3,7 +3,6 @@ import discord
 import json
 import requests
 import io
-import urllib.request
 
 from random import randint
 from discord.ext import commands
@@ -35,7 +34,8 @@ class Fun:
         answer = random.choice(lists.ballresponse)
         await ctx.send(f"🎱 **Question:** {question}\n**Answer:** {answer}")
 
-    async def randomimageapi(self, ctx, url, endpoint):
+    @staticmethod
+    async def randomimageapi(ctx, url, endpoint):
         try:
             r = await http.get(url, res_method="json", no_cache=True)
         except json.JSONDecodeError:
@@ -45,7 +45,8 @@ class Fun:
         embed.set_image(url=r[endpoint])
         await ctx.send(embed=embed)
 
-    async def textapi(self, ctx, url, endpoint):
+    @staticmethod
+    async def textapi(ctx, url, endpoint):
         try:
             r = await http.get(url, res_method="json", no_cache=True)
         except json.JSONDecodeError:
@@ -53,7 +54,8 @@ class Fun:
 
         await ctx.send(f"{r[endpoint]}")
 
-    async def factapi(self, ctx, url, endpoint):
+    @staticmethod
+    async def factapi(ctx, url, endpoint):
         try:
             r = await http.get(url, res_method="json", no_cache=True)
         except json.JSONDecodeError:
@@ -61,7 +63,8 @@ class Fun:
 
         await ctx.send(f'**Did you know?** 🤔\n\n{r[endpoint]}')
 
-    async def asciitext(self, ctx, url):
+    @staticmethod
+    async def asciitext(ctx, url):
         try:
             with requests.get(url) as f:
                 html = f.text
@@ -230,7 +233,7 @@ class Fun:
             data = requests.get(url)
             content = io.BytesIO(data.content)
             filename = url.rsplit("/", 1)[-1]
-            return {"content":content, "filename":filename}
+            return {"content": content, "filename": filename}
 
         pats = requests.get("http://headp.at/js/pats.json").json()
         pat = random.choice(pats)
@@ -300,7 +303,7 @@ class Fun:
 
     @commands.command()
     @commands.guild_only()
-    async def ship(self, ctx, user : discord.User, *, user2: discord.User=None):
+    async def ship(self, ctx, user: discord.User, *, user2: discord.User=None):
         """Checks the shiprate for 2 users"""
         author = ctx.message.author
         if not user2:
@@ -349,10 +352,10 @@ class Fun:
                 heart = '💔'
             elif n < 10:
                 bar = ".........."
-                heart ='🖤'
+                heart = '🖤'
             else:
                 bar = ".........."
-                heart ='🖤'
+                heart = '🖤'
             name1 = user.name.replace(" ", "")
             name1 = name1[:int(len(name1) / 2):]
             name2 = user2.name.replace(" ", "")
