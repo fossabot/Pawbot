@@ -17,7 +17,7 @@ class AdminPanel:
         query = "SELECT * FROM adminpanel WHERE serverid = $1;"
         row = await self.bot.db.fetchrow(query, ctx.guild.id)
         if row is None:
-            query = "INSERT INTO adminpanel VALUES ($1, $2, $3, $4, %5, $6);"
+            query = "INSERT INTO adminpanel VALUES ($1, $2, $3, $4, $5, $6);"
             await self.bot.db.execute(query, ctx.guild.id, 1, 0, 0, 0, 1)
             query = "SELECT * FROM adminpanel WHERE serverid = $1;"
             row = await self.bot.db.fetchrow(query, ctx.guild.id)

@@ -24,8 +24,8 @@ async def run():
     db = await asyncpg.create_pool(**credentials)
 
     await db.execute("CREATE TABLE IF NOT EXISTS warnings(serverid bigint, userid bigint, warnings int);")
-    await db.execute("CREATE TABLE IF NOT EXISTS adminpanel(serverid bigint, embeds int, joins int, nsfw int, auomod int, modlog int);")
     await db.execute("CREATE TABLE IF NOT EXISTS modlogs(serverid bigint, caseid bigint, casenumber int, casetype varchar, target bigint, moderator bigint, reason varchar);")
+    await db.execute("CREATE TABLE IF NOT EXISTS adminpanel(serverid bigint, embeds int, joins int, nsfw int, automod int, modlog int);")
 
     bot = Bot(command_prefix=config.prefix, pm_help=True, help_attrs=help_attrs, formatter=HelpFormat(), db=db)
     try:
