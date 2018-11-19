@@ -19,13 +19,10 @@ class Bot(AutoShardedBot):
         if msg.guild is None:
             if not self.is_ready() or msg.author.bot or not permissions.can_send(msg) or msg.author.id in blacklist.blacklist:
                 return
-            else:
-                await self.process_commands(msg)
-        else:
-            if not self.is_ready() or msg.author.bot or not permissions.can_send(msg) or msg.author.id in blacklist.blacklist or msg.guild.id in blacklist.blacklist:
-                return
-            else:
-                await self.process_commands(msg)
-                self.counter[f"{msg.author.id}.{msg.guild.id}.msgs"] += 1
-                await asyncio.sleep(5)
-                self.counter[f"{msg.author.id}.{msg.guild.id}.msgs"] -= 1
+            return await self.process_commands(msg)
+        if not self.is_ready() or msg.author.bot or not permissions.can_send(msg) or msg.author.id in blacklist.blacklist or msg.guild.id in blacklist.blacklist:
+            return
+        await self.process_commands(msg)
+        self.counter[f"{msg.author.id}.{msg.guild.id}.msgs"] += 1
+        await asyncio.sleep(5)
+        self.counter[f"{msg.author.id}.{msg.guild.id}.msgs"] -= 1
