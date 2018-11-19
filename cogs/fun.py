@@ -63,8 +63,8 @@ class Fun:
 
     async def asciitext(self, ctx, url):
         try:
-            with urllib.request.urlopen(url) as f:
-                html = f.read().decode('utf-8')
+            with requests.get(url) as f:
+                html = f.text
                 await ctx.send(f"```\n{html}\n```")
         except InvalidHTTPResponse as e:
             print(e)
