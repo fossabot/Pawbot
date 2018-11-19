@@ -252,10 +252,10 @@ class Admin:
 
     @sudo.command(aliases=["c", "--c", "--channel", "channel"])
     @commands.check(repo.is_owner)
-    async def sudo_channel(self, ctx, id: int, *, command: str):
+    async def sudo_channel(self, ctx, chid: int, *, command: str):
         """Run a command as another user."""
         cmd = copy(ctx.message)
-        cmd.channel = self.bot.get_channel(id)
+        cmd.channel = self.bot.get_channel(chid)
         cmd.content = ctx.prefix + command
         new_ctx = await self.bot.get_context(cmd)
         await self.bot.invoke(new_ctx)
@@ -271,21 +271,20 @@ class Admin:
     async def getserverinfo(self, ctx, *, guild_id: int):
         """ Makes me get the information from a guild id"""
         guild = self.bot.get_guild(guild_id)
-        try:
-            members = set(guild.members)
-            bots = filter(lambda m: m.bot, members)
-            bots = set(bots)
-            members = len(members) - len(bots)
-            if guild == ctx.guild:
-                roles = " ".join([x.mention for x in guild.roles != "@everyone"])
-            else:
-                roles = ", ".join([x.name for x in guild.roles if x.name != "@everyone"])
+        if guild is None:
+            return await ctx.send("Hmph.. I got nothing..")
+        members = set(guild.members)
+        bots = filter(lambda m: m.bot, members)
+        bots = set(bots)
+        members = len(members) - len(bots)
+        if guild == ctx.guild:
+            roles = " ".join([x.mention for x in guild.roles != "@everyone"])
+        else:
+            roles = ", ".join([x.name for x in guild.roles if x.name != "@everyone"])
 
-            info = discord.Embed(title="Guild info", description=f"» Name: {guild.name}\n» Members/Bots: `{members}:{len(bots)}`"f"\n» Owner: {guild.owner}\n» Created at: {guild.created_at}"f"\n» Roles: {roles}", color=discord.Color.blue())
-            info.set_thumbnail(url=guild.icon_url)
-            await ctx.send(embed=info)
-        except:
-            await ctx.send("Hmmph i got nothin. Either you gave an invalid server id or i'm not in that server")
+        info = discord.Embed(title="Guild info", description=f"» Name: {guild.name}\n» Members/Bots: `{members}:{len(bots)}`"f"\n» Owner: {guild.owner}\n» Created at: {guild.created_at}"f"\n» Roles: {roles}", color=discord.Color.blue())
+        info.set_thumbnail(url=guild.icon_url)
+        await ctx.send(embed=info)
 
     @commands.command(alisases=['bsl'])
     @commands.check(repo.is_owner)
@@ -308,24 +307,24 @@ class Admin:
     @commands.command(aliases=["webhooktest"])
     @commands.check(repo.is_owner)
     async def whtest(self, ctx, whlink: str, *, texttosend):
-        await ctx.message.delete()
         try:
+            await ctx.message.delete()
             hook = Webhook(whlink, is_async=True)
             await hook.send(texttosend)
             await hook.close()
-        except:
-            await ctx.send("I couldn't send the message..")
+        except ValueError:
+            return await ctx.send("I couldn't send the message..")
 
     @commands.command()
     @commands.check(repo.is_owner)
-    async def blacklist(self, ctx, id: int):
+    async def blacklist(self, ctx, uid: int):
         with open("blacklist.json", "r+") as file:
             content = json.load(file)
-            content["blacklist"].append(id)
+            content["blacklist"].append(uid)
             file.seek(0)
             json.dump(content, file)
             file.truncate()
-        await ctx.send(f"I have successfully blacklisted the id **{id}**")
+        await ctx.send(f"I have successfully blacklisted the id **{uid}**")
 
 
 def setup(bot):
