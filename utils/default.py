@@ -21,5 +21,3 @@ def timetext(name):
 
 def date(target):
     return target.strftime("%d %B %Y, %H:%M")
-
-
