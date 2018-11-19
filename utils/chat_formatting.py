@@ -218,11 +218,11 @@ def pagify(text: str,
             to_send = escape(in_text[:closest_delim], mass_mentions=True)
         else:
             to_send = in_text[:closest_delim]
-        if len(to_send.strip()) > 0:
+        if not to_send.strip():
             yield to_send
         in_text = in_text[closest_delim:]
 
-    if len(in_text.strip()) > 0:
+    if not in_text.strip():
         if escape_mass_mentions:
             yield escape(in_text, mass_mentions=True)
         else:
