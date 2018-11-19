@@ -3,14 +3,11 @@ import discord
 import json
 import requests
 import io
-import os
-import string
+import urllib.request
 
-from PIL import Image
 from random import randint
-from io import BytesIO
 from discord.ext import commands
-from utils import lists, permissions, http, default, eapi, sfapi
+from utils import lists, http, default, eapi, sfapi
 
 processapi = eapi.processapi
 processshowapi = eapi.processshowapi
@@ -63,6 +60,14 @@ class Fun:
             return await ctx.send("Couldn't find anything from the API")
 
         await ctx.send(f'**Did you know?** 🤔\n\n{r[endpoint]}')
+
+    async def asciitext(self, ctx, url):
+        try:
+            with urllib.request.urlopen(url) as f:
+                html = f.read().decode('utf-8')
+                await ctx.send(f"```\n{html}\n```")
+        except InvalidHTTPResponse as e:
+            print(e)
 
     @commands.command()
     @commands.cooldown(rate=1, per=5.0, type=commands.BucketType.user)
@@ -381,6 +386,42 @@ class Fun:
             await ctx.send("You need to send at least 2 argument!")
             return
         await ctx.send(random.choice(choices))
+
+    @commands.command()
+    async def jpeg(self, ctx, urltojpeg: str):
+        """ Does what it says on the can """
+        if "http" not in urltojpeg:
+            return ctx.send("Include a url you donk!")
+        await self.randomimageapi(ctx, f'https://nekobot.xyz/api/imagegen?type=jpeg&url={urltojpeg}', 'message')
+
+    @commands.command()
+    async def deepfry(self, ctx, urltojpeg: str):
+        """ Deepfries an image """
+        if "http" not in urltojpeg:
+            return ctx.send("Include a url you donk!")
+        await self.randomimageapi(ctx, f'https://nekobot.xyz/api/imagegen?type=deepfry&image={urltojpeg}', 'message')
+
+    @commands.command()
+    async def clyde(self, ctx, clydetext: str):
+        """ Makes Clyde say something """
+        if clydetext is None:
+            return ctx.send("Include some text you donk!")
+        await self.randomimageapi(ctx, f'https://nekobot.xyz/api/imagegen?type=clyde&text={clydetext}', 'message')
+
+    @commands.command()
+    async def magik(self, ctx, intensity: str, imgtomagik: str):
+        """ why don'T WE JUST RELAX AND TURn on THe rADIO? wOuLd You LIKE AM OR FM """
+        if imgtomagik is None:
+            return ctx.send("Include some text you donk!")
+        if intensity not in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']:
+            return ctx.send("Include an intensity to magik (1-10)")
+        await self.randomimageapi(ctx, f'https://nekobot.xyz/api/imagegen?type=magik&image={imgtomagik}&intensity={intensity}', 'message')
+
+    @commands.command(aliases=['ascii'])
+    async def asciify(self, ctx, *, text: str):
+        """ Test """
+        texttoascii = text.replace(" ", "%20")
+        await self.asciitext(ctx, f"http://artii.herokuapp.com/make?text={texttoascii}")
 
 
 def setup(bot):
