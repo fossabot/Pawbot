@@ -3,8 +3,9 @@ import discord
 import psutil
 import os
 import asyncio
+import dhooks
 
-from discord_webhook import DiscordWebhook, DiscordEmbed
+from dhooks import Webhook, Embed
 from discord.ext import commands
 from datetime import datetime
 from utils import repo, default
@@ -103,10 +104,20 @@ class Information:
     async def server(self, ctx):
         """ Check info about current server """
         if ctx.invoked_subcommand is None:
+            if ctx.guild.icon_url is "":
+                guildicon = "https://cdn.discordapp.com/attachments/443347566231289856/513380120451350541/2mt196.jpg"
+            else:
+                guildicon = ctx.guild.icon_url
+
             findbots = sum(1 for member in ctx.guild.members if member.bot)
 
+            emojilist = ""
+            for Emoji in ctx.guild.emojis:
+                emojilist += f"{Emoji} "
+            if len(emojilist) > 1024:
+                emojilist = "Too long!"
             embed = discord.Embed(colour=249742)
-            embed.set_thumbnail(url=ctx.guild.icon_url)
+            embed.set_thumbnail(url=guildicon)
             embed.add_field(name="Server Name", value=ctx.guild.name, inline=True)
             embed.add_field(name="Server ID", value=ctx.guild.id, inline=True)
             embed.add_field(name="Members", value=ctx.guild.member_count, inline=True)
@@ -114,6 +125,7 @@ class Information:
             embed.add_field(name="Owner", value=ctx.guild.owner, inline=True)
             embed.add_field(name="Region", value=ctx.guild.region, inline=True)
             embed.add_field(name="Created", value=default.date(ctx.guild.created_at), inline=True)
+            embed.add_field(name='Emojis', value=emojilist, inline=False)
             await ctx.send(content=f"ℹ information about **{ctx.guild.name}**", embed=embed)
 
     @commands.command()
@@ -137,7 +149,7 @@ class Information:
         if hasattr(user, "joined_at"):
             embed.add_field(name="Joined this server", value=default.date(user.joined_at), inline=True)
 
-        await ctx.send(content=f"ℹ About **{user.id}**", embed=embed)
+        await ctx.send(content=f"ℹ About **{user.name}**", embed=embed)
 
     @commands.command()
     @commands.guild_only()
@@ -165,7 +177,7 @@ class Information:
     @commands.command()
     async def suggest(self, ctx, *, suggestion_txt: str):
         """ Send a suggestion to my owner or just tell him shes doing a bad job """
-        webhook = DiscordWebhook(url=f'{self.config.suggwebhook}')
+        webhook = Webhook(self.config.suggwebhook, is_async=True)
         suggestion = suggestion_txt
         if ctx.guild:
             color = ctx.author.color
@@ -178,15 +190,17 @@ class Information:
         if len(suggestion) > 1500:
             await ctx.send(f"{ctx.author.mention} thats a bit too long for me to send. Shorten it and try again. (1500 character limit)")
         else:
-            suggestionem = DiscordEmbed(description=f"{suggestion}", colour=color)
+            suggestionem = dhooks.Embed(description=f"{suggestion}", colour=color, timestamp=True)
             suggestionem.set_author(name=f"From {ctx.author}", icon_url=ctx.author.avatar_url)
             suggestionem.set_footer(text=footer, icon_url=guild_pic)
             try:
                 await ctx.send("Alright, i sent your suggestion!!")
-                webhook.add_embed(suggestionem)
-                webhook.execute()
+                await webhook.execute(embeds=suggestionem)
+                await webhook.close()
             except Exception as e:
-                return await ctx.send("uhm.. something went wrong, try again later..")
+                await ctx.send("uhm.. something went wrong, try again later..")
+                logchannel = self.bot.get_channel(508420200815656966)
+                return await logchannel.send(f"`ERROR`\n```py\n{e}\n```\nRoot server: {ctx.guild.name} ({ctx.guild.id})\nRoot user: {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})")
 
     @commands.command()
     async def args(self, ctx, *args):
