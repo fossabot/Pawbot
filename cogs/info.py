@@ -104,20 +104,16 @@ class Information:
     async def server(self, ctx):
         """ Check info about current server """
         if ctx.invoked_subcommand is None:
-            if ctx.guild.icon_url is "":
-                guildicon = "https://cdn.discordapp.com/attachments/443347566231289856/513380120451350541/2mt196.jpg"
-            else:
-                guildicon = ctx.guild.icon_url
 
             findbots = sum(1 for member in ctx.guild.members if member.bot)
 
-            emojilist = ""
+            emojilist = "​"
             for Emoji in ctx.guild.emojis:
                 emojilist += f"{Emoji} "
             if len(emojilist) > 1024:
                 emojilist = "Too long!"
             embed = discord.Embed(colour=249742)
-            embed.set_thumbnail(url=guildicon)
+            embed.set_thumbnail(url=ctx.guild.icon_url)
             embed.add_field(name="Server Name", value=ctx.guild.name, inline=True)
             embed.add_field(name="Server ID", value=ctx.guild.id, inline=True)
             embed.add_field(name="Members", value=ctx.guild.member_count, inline=True)
