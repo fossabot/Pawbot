@@ -1,5 +1,4 @@
 import discord
-import asyncpg
 
 from discord.ext import commands
 from utils import permissions, default

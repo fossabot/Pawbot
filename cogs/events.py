@@ -5,9 +5,8 @@ import psutil
 import os
 import random
 import datetime
-import aiohttp
 
-from dhooks import Webhook, Embed
+from dhooks import Webhook
 from datetime import datetime
 from discord.ext.commands import errors
 from utils import default, lists
