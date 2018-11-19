@@ -97,7 +97,7 @@ class Moderation:
         if row is None:
             query = "INSERT INTO warnings VALUES ($1, $2, $3);"
             await self.bot.db.execute(query, ctx.guild.id, member.id, amount)
-            await ctx.send(f"I added **{amount}** to {member.mention}'s warns! They now have **{amountgiven}**.")
+            await ctx.send(f"I added **{amount}** to {member.mention}'s warns! They now have **{amount}**.")
         else:
             query = "SELECT warnings FROM warnings WHERE serverid = $1 AND userid = $2;"
             row = await self.bot.db.fetchrow(query, ctx.guild.id, member.id)
@@ -243,7 +243,7 @@ class Moderation:
         try:
             therole = discord.Object(id=message[0])
         except IndexError:
-            return await ctx.send("Are you sure you've made a role called **Muted**? Remember that it's case sensetive too...")
+            return await ctx.send("Are you sure you've made a role called **Muted**? Remember that it's case sensitive too...")
 
         try:
             await member.add_roles(therole)
@@ -274,7 +274,7 @@ class Moderation:
         try:
             therole = discord.Object(id=message[0])
         except IndexError:
-            return await ctx.send("Are you sure you've made a role called **Muted**? Remember that it's case sensetive too...")
+            return await ctx.send("Are you sure you've made a role called **Muted**? Remember that it's case sensitive too...")
 
         try:
             await member.remove_roles(therole)
@@ -307,7 +307,7 @@ class Moderation:
     @find.command(name="playing")
     async def find_playing(self, ctx, *, search: str):
         result = [f"{i} | {i.activity.name}\r\n" for i in ctx.guild.members if (i.activity is not None) and (search.lower() in i.activity.name.lower()) and (not i.bot)]
-        if len(result) == 0:
+        if result is None:
             return await ctx.send("Your search result was empty...")
         data = BytesIO(''.join(result).encode('utf-8'))
         await ctx.send(content=f"Found **{len(result)}** on your search for **{search}**",
@@ -316,7 +316,7 @@ class Moderation:
     @find.command(name="username", aliases=["name"])
     async def find_name(self, ctx, *, search: str):
         result = [f"{i}\r\n" for i in ctx.guild.members if (search.lower() in i.name.lower())]
-        if len(result) == 0:
+        if result is None:
             return await ctx.send("Your search result was empty...")
         data = BytesIO(''.join(result).encode('utf-8'))
         await ctx.send(content=f"Found **{len(result)}** on your search for **{search}**",
@@ -325,7 +325,7 @@ class Moderation:
     @find.command(name="discriminator", aliases=["discrim"])
     async def find_discriminator(self, ctx, *, search: str):
         result = [f"{i}\r\n" for i in ctx.guild.members if (search in i.discriminator)]
-        if len(result) == 0:
+        if result is None:
             return await ctx.send("Your search result was empty...")
         data = BytesIO(''.join(result).encode('utf-8'))
         await ctx.send(content=f"Found **{len(result)}** on your search for **{search}**",
@@ -341,7 +341,8 @@ class Moderation:
             help_cmd = self.bot.get_command('help')
             await ctx.invoke(help_cmd, 'prune')
 
-    async def do_removal(self, ctx, limit, predicate, *, before=None, after=None, message=True):
+    @staticmethod
+    async def do_removal(ctx, limit, predicate, *, before=None, after=None, message=True):
         if limit > 2000:
             return await ctx.send(f'Too many messages to search given ({limit}/2000)')
 
@@ -355,7 +356,7 @@ class Moderation:
 
         try:
             deleted = await ctx.channel.purge(limit=limit, before=before, after=after, check=predicate)
-        except discord.Forbidden as e:
+        except discord.Forbidden:
             return await ctx.send('I do not have permissions to delete messages.')
         except discord.HTTPException as e:
             return await ctx.send(f'Error: {e} (try a smaller search?)')
@@ -409,7 +410,7 @@ class Moderation:
         await self.do_removal(ctx, search, predicate)
 
     @prune.command(name='users')
-    async def _users(self, ctx, prefix=None, search=100):
+    async def _users(self, ctx, search=100):
         """Removes only user messages. """
 
         def predicate(m):
@@ -436,7 +437,7 @@ class Moderation:
 
         total_reactions = 0
         async for message in ctx.history(limit=search, before=ctx.message):
-            if len(message.reactions):
+            if not message.reactions:
                 total_reactions += sum(r.count for r in message.reactions)
                 await message.clear_reactions()
 
@@ -447,24 +448,18 @@ class Moderation:
     @permissions.has_permissions(manage_roles=True)
     async def ra(self, ctx, member: discord.Member, *, rolename: str = None):
         """ Gives the role to the user. """
-        try:
-            role = discord.utils.get(ctx.guild.roles, name=rolename)
-            await member.add_roles(role)
-            await ctx.send(f"👌 I have given **{member.name}** the **{role.name}** role!")
-        except:
-            return
+        role = discord.utils.get(ctx.guild.roles, name=rolename)
+        await member.add_roles(role)
+        await ctx.send(f"👌 I have given **{member.name}** the **{role.name}** role!")
 
     @commands.command()
     @commands.guild_only()
     @permissions.has_permissions(manage_roles=True)
     async def rr(self, ctx, member: discord.Member, *, rolename: str = None):
         """ Removes the role from a user. """
-        try:
-            role = discord.utils.get(ctx.guild.roles, name=rolename)
-            await member.remove_roles(role)
-            await ctx.send(f"👌 I have removed **{member.name}** from the **{role.name}** role!")
-        except:
-            return
+        role = discord.utils.get(ctx.guild.roles, name=rolename)
+        await member.remove_roles(role)
+        await ctx.send(f"👌 I have removed **{member.name}** from the **{role.name}** role!")
 
     @commands.command()
     @commands.guild_only()
