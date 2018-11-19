@@ -1,3 +1,4 @@
+asyncpg
 requests
 dhooks
 aiohttp
