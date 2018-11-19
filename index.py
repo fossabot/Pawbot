@@ -14,8 +14,7 @@ A discord bot written in python, made for managing communities.
 
 class HelpFormat(HelpFormatter):
     async def format_help_for(self, context, command_or_bot):
-        await context.message.delete()
-
+        await context.message.add_reaction("📞")
         return await super().format_help_for(context, command_or_bot)
 
 
@@ -25,8 +24,8 @@ async def run():
     db = await asyncpg.create_pool(**credentials)
 
     await db.execute("CREATE TABLE IF NOT EXISTS warnings(serverid bigint, userid bigint, warnings int);")
+    await db.execute("CREATE TABLE IF NOT EXISTS adminpanel(serverid bigint, embeds int, joins int, nsfw int, auomod int, modlog int);")
     await db.execute("CREATE TABLE IF NOT EXISTS modlogs(serverid bigint, caseid bigint, casenumber int, casetype varchar, target bigint, moderator bigint, reason varchar);")
-    await db.execute("CREATE TABLE IF NOT EXISTS adminpanel(autorole bigint, nsfw bigint, invites int, lockdown varchar, joins bigint, welcomechan bigint, welcomemsg varchar, leavechan bigint, leavemsg varchar, autorole bigint, adchan bigint, modlog bigint);")
 
     bot = Bot(command_prefix=config.prefix, pm_help=True, help_attrs=help_attrs, formatter=HelpFormat(), db=db)
     try:
