@@ -219,11 +219,8 @@ class Admin:
             await ctx.send(f'```py\n{value}{traceback.format_exc()}\n```')
         else:
             value = stdout.getvalue()
-            try:
-                reactiontosend = self.bot.get_emoji(508388437661843483)
-                await ctx.message.add_reaction(reactiontosend)
-            except:
-                pass
+            reactiontosend = self.bot.get_emoji(508388437661843483)
+            await ctx.message.add_reaction(reactiontosend)
 
             if ret is None:
                 if value:
