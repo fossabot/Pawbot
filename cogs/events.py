@@ -29,7 +29,7 @@ class Events:
         self.process = psutil.Process(os.getpid())
 
     async def on_command_error(self, ctx, err):
-        if isinstance(err, errors.MissingRequiredArgument) or isinstance(err, errors.BadArgument):
+        if isinstance(err, (errors.BadArgument, errors.MissingRequiredArgument)):
             await send_cmd_help(ctx)
 
         elif isinstance(err, errors.CommandInvokeError):
