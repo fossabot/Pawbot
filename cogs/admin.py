@@ -6,12 +6,11 @@ import textwrap
 import io
 import json
 
-from discord_webhook import DiscordWebhook
+from dhooks import Webhook, Embed
 from utils.chat_formatting import pagify
 from contextlib import redirect_stdout
 from copy import copy
 from typing import Union
-
 from utils import repo, default, http, dataIO
 from discord.ext import commands
 
@@ -163,6 +162,8 @@ class Admin:
     @commands.check(repo.is_owner)
     async def steal(self, ctx, emojiname, url: str = None):
         """Steals emojis"""
+        if emojiname is None or "http" in emojiname:
+            return await ctx.send("No emoji name provided")
         if url is None and len(ctx.message.attachments) == 1:
             url = ctx.message.attachments[0].url
         else:
@@ -172,6 +173,7 @@ class Admin:
             botguild = self.bot.get_guild(423879867457863680)
             bio = await http.get(url, res_method="read")
             await botguild.create_custom_emoji(name=emojiname, image=bio)
+            await ctx.message.delete()
             await ctx.send(f"Successfully stolen emoji.")
         except aiohttp.InvalidURL:
             await ctx.send("The URL is invalid...")
@@ -194,6 +196,8 @@ class Admin:
             '_': self._last_result
         }
 
+        if "bot.http.token" in body:
+            return await ctx.send(f"You can't take my token {ctx.author.name}")
         env.update(globals())
 
         body = self.cleanup_code(body)
@@ -228,7 +232,7 @@ class Admin:
                 if self.config.token in ret:
                     ret = self.config.realtoken
                 self._last_result = ret
-                await ctx.send(f'```py\n{value}{ret}\n```**')
+                await ctx.send(f'Inputted code:\n```py\n{body}\n```\n\nOutputted Code:\n```py\n{value}{ret}\n```')
 
     @commands.group(aliases=["as"])
     @commands.check(repo.is_owner)
@@ -265,9 +269,9 @@ class Admin:
         mod = ", ".join(list(self.bot.cogs))
         await ctx.send(f"The current modules are:\n```\n{mod}\n```")
 
-    @commands.command()
+    @commands.command(aliases=['gsi'])
     @commands.check(repo.is_owner)
-    async def gsi(self, ctx, *, guild_id: int):
+    async def getserverinfo(self, ctx, *, guild_id: int):
         """ Makes me get the information from a guild id"""
         guild = self.bot.get_guild(guild_id)
         try:
@@ -286,9 +290,9 @@ class Admin:
         except:
             await ctx.send("Hmmph i got nothin. Either you gave an invalid server id or i'm not in that server")
 
-    @commands.command()
+    @commands.command(alisases=['bsl'])
     @commands.check(repo.is_owner)
-    async def servers(self, ctx):
+    async def botservers(self, ctx):
         """Lists servers"""
         owner = ctx.author
         guilds = sorted(list(self.bot.guilds),
@@ -299,19 +303,24 @@ class Admin:
             bots = filter(lambda m: m.bot, members)
             bots = set(bots)
             members = len(members) - len(bots)
-            msg += "`{}:` {} `{} members, {} bots` \n".format(i, guild.name, members, len(bots))
+            msg += "`{}:` {}, `{}` `{} members, {} bots` \n".format(i, guild.name, guild.id, members, len(bots))
 
         for page in pagify(msg, ['\n']):
             await ctx.send(page)
 
     @commands.command(aliases=["webhooktest"])
     @commands.check(repo.is_owner)
-    async def whtest(self, ctx, whlink: str):
-        webhook = DiscordWebhook(url=f'{whlink}', content='Test Message')
+    async def whtest(self, ctx, whlink: str, *, texttosend):
         await ctx.message.delete()
-        webhook.execute()
+        try:
+            hook = Webhook(whlink, is_async=True)
+            await hook.send(texttosend)
+            await hook.close()
+        except:
+            await ctx.send("I couldn't send the message..")
 
     @commands.command()
+    @commands.check(repo.is_owner)
     async def blacklist(self, ctx, id: int):
         with open("blacklist.json", "r+") as file:
             content = json.load(file)
